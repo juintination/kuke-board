@@ -1,2 +1,21 @@
 server:
   port: 8080
+
+spring:
+  application:
+    name: kuke-board-article-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${local.db.host}:${local.db.port}/${local.db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
+    username: ${local.db.username}
+    password: ${local.db.password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    open-in-view: false
