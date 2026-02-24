@@ -2,7 +2,7 @@ package kuke.board.article.entity
 
 import jakarta.persistence.*
 import kuke.board.article.dto.request.ArticleUpdateRequest
-import java.time.LocalDateTime
+import kuke.board.jpa.entity.BaseEntity
 
 @Entity
 @Table(name = "article")
@@ -23,21 +23,13 @@ class Article private constructor(
 
     @Column(columnDefinition = "BIGINT UNSIGNED", nullable = false)
     val writerId: Long,
-
-    @Column(nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-
-    @Column(nullable = false)
-    var modifiedAt: LocalDateTime = createdAt
-) {
+) : BaseEntity() {
     protected constructor() : this(
         id = 0,
         title = "",
         content = "",
         boardId = 0,
         writerId = 0,
-        createdAt = LocalDateTime.now(),
-        modifiedAt = LocalDateTime.now()
     )
 
     companion object {
@@ -63,6 +55,5 @@ class Article private constructor(
     ) {
         this.title = request.title
         this.content = request.content
-        this.modifiedAt = LocalDateTime.now()
     }
 }
