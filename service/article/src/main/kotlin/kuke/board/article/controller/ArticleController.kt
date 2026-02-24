@@ -14,9 +14,9 @@ class ArticleController(
 
     @PostMapping
     fun create(
-        @RequestBody req: ArticleCreateRequest
+        @RequestBody request: ArticleCreateRequest
     ): ArticleResponse {
-        return articleService.create(req)
+        return articleService.create(request)
     }
 
     @GetMapping("/{articleId}")
@@ -29,9 +29,9 @@ class ArticleController(
     @PutMapping("/{articleId}")
     fun update(
         @PathVariable articleId: Long,
-        @RequestBody req: ArticleUpdateRequest
+        @RequestBody request: ArticleUpdateRequest
     ): ArticleResponse {
-        return articleService.update(articleId, req)
+        return articleService.update(articleId, request)
     }
 
     @DeleteMapping("/{articleId}")

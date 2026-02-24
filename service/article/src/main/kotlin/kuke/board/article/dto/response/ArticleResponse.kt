@@ -13,14 +13,16 @@ data class ArticleResponse(
     val modifiedAt: LocalDateTime
 ) {
     companion object {
-        fun from(entity: Article) = ArticleResponse(
-            articleId = requireNotNull(entity.articleId),
-            title = entity.title,
-            content = entity.content,
-            boardId = requireNotNull(entity.boardId),
-            writerId = requireNotNull(entity.writerId),
-            createdAt = requireNotNull(entity.createdAt),
-            modifiedAt = requireNotNull(entity.modifiedAt)
+        fun from(
+            article: Article
+        ) = ArticleResponse(
+            articleId = article.id,
+            title = article.title,
+            content = article.content,
+            boardId = requireNotNull(article.boardId),
+            writerId = requireNotNull(article.writerId),
+            createdAt = requireNotNull(article.createdAt),
+            modifiedAt = requireNotNull(article.modifiedAt)
         )
     }
 }

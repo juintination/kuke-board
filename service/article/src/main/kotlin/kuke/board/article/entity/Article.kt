@@ -1,6 +1,7 @@
 package kuke.board.article.entity
 
 import jakarta.persistence.*
+import kuke.board.article.dto.request.ArticleUpdateRequest
 import java.time.LocalDateTime
 
 @Entity
@@ -9,7 +10,7 @@ class Article private constructor(
 
     @Id
     @Column(columnDefinition = "BIGINT UNSIGNED")
-    val articleId: Long,
+    val id: Long,
 
     @Column(length = 100, nullable = false)
     var title: String,
@@ -30,7 +31,7 @@ class Article private constructor(
     var modifiedAt: LocalDateTime = createdAt
 ) {
     protected constructor() : this(
-        articleId = 0,
+        id = 0,
         title = "",
         content = "",
         boardId = 0,
@@ -41,22 +42,14 @@ class Article private constructor(
 
     companion object {
         fun create(
-            articleId: Long,
+            id: Long,
             title: String,
             content: String,
             boardId: Long,
             writerId: Long
         ): Article {
-            require(title.length <= 100) {
-                "Title cannot exceed 100 characters."
-            }
-
-            require(content.length <= 3000) {
-                "Content cannot exceed 3000 characters."
-            }
-
             return Article(
-                articleId = articleId,
+                id = id,
                 title = title,
                 content = content,
                 boardId = boardId,
@@ -65,17 +58,11 @@ class Article private constructor(
         }
     }
 
-    fun update(title: String, content: String) {
-        require(title.length <= 100) {
-            "Title cannot exceed 100 characters."
-        }
-
-        require(content.length <= 3000) {
-            "Content cannot exceed 3000 characters."
-        }
-
-        this.title = title
-        this.content = content
+    fun update(
+        request: ArticleUpdateRequest,
+    ) {
+        this.title = request.title
+        this.content = request.content
         this.modifiedAt = LocalDateTime.now()
     }
 }
