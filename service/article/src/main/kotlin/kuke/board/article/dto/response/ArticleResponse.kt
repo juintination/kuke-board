@@ -10,7 +10,7 @@ data class ArticleResponse(
     val boardId: Long,
     val writerId: Long,
     val createdAt: LocalDateTime,
-    val modifiedAt: LocalDateTime
+    val modifiedAt: LocalDateTime,
 ) {
     companion object {
         fun from(
@@ -19,10 +19,10 @@ data class ArticleResponse(
             articleId = article.id,
             title = article.title,
             content = article.content,
-            boardId = requireNotNull(article.boardId),
-            writerId = requireNotNull(article.writerId),
-            createdAt = requireNotNull(article.createdAt),
-            modifiedAt = requireNotNull(article.modifiedAt)
+            boardId = article.boardId,
+            writerId = article.writerId,
+            createdAt = article.createdAt,
+            modifiedAt = article.modifiedAt,
         )
     }
 }
