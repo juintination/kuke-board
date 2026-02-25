@@ -6,6 +6,7 @@ import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
 import kuke.board.common.snowflake.Snowflake
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -59,8 +60,6 @@ class ArticleService(
 
     private fun getArticleOrThrow(
         articleId: Long
-    ): Article = articleRepository.findById(articleId)
-        .orElseThrow {
-            IllegalArgumentException("Article not found. id=$articleId")
-        }
+    ): Article = articleRepository.findByIdOrNull(articleId)
+        ?: throw IllegalArgumentException("존재하지 않는 게시글입니다. articleId: $articleId")
 }
