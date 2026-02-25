@@ -21,4 +21,8 @@ abstract class BaseEntity {
     @Column(nullable = false, columnDefinition = "DATETIME(6)")
     var modifiedAt: LocalDateTime = LocalDateTime.now()
         protected set
+
+    @Column(columnDefinition = "DATETIME(6)")
+    var deletedAt: LocalDateTime? = null
+        protected set
 }

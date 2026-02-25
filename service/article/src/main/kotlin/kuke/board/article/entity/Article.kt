@@ -3,9 +3,13 @@ package kuke.board.article.entity
 import jakarta.persistence.*
 import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
+import org.hibernate.annotations.SQLDelete
+import org.hibernate.annotations.SQLRestriction
 
 @Entity
 @Table(name = "article")
+@SQLRestriction("deleted_at is null")
+@SQLDelete(sql = "update article set deleted_at = now() where id = ?")
 class Article private constructor(
 
     @Id
