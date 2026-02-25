@@ -28,14 +28,6 @@ class Article private constructor(
     @Column(columnDefinition = "BIGINT UNSIGNED", nullable = false)
     val writerId: Long,
 ) : BaseEntity() {
-    protected constructor() : this(
-        id = 0,
-        title = "",
-        content = "",
-        boardId = 0,
-        writerId = 0,
-    )
-
     companion object {
         fun create(
             id: Long,
