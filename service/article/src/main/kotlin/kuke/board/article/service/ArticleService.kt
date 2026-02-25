@@ -45,7 +45,7 @@ class ArticleService(
         request: ArticleUpdateRequest
     ): ArticleResponse {
         val article = getArticleOrThrow(articleId)
-        getArticleOrThrow(articleId).update(request)
+        article.update(request)
         return ArticleResponse.from(article)
     }
 
