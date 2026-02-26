@@ -4,7 +4,7 @@ import kuke.board.article.entity.Article
 import java.time.LocalDateTime
 
 data class ArticleResponse(
-    val articleId: Long,
+    val id: Long,
     val title: String,
     val content: String,
     val boardId: Long,
@@ -16,7 +16,7 @@ data class ArticleResponse(
         fun from(
             article: Article
         ) = ArticleResponse(
-            articleId = article.id,
+            id = article.id,
             title = article.title,
             content = article.content,
             boardId = article.boardId,
