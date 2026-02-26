@@ -2,10 +2,12 @@ package kuke.board.article.service
 
 import kuke.board.article.dto.request.ArticleCreateRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
+import kuke.board.article.dto.response.ArticlePageResponse
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
 import kuke.board.common.snowflake.Snowflake
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -38,6 +40,37 @@ class ArticleService(
     ): ArticleResponse {
         val article = getArticleOrThrow(articleId)
         return ArticleResponse.from(article)
+    }
+
+    @Transactional(readOnly = true)
+    fun readAll(
+        boardId: Long,
+        page: Long,
+        size: Long
+    ): ArticlePageResponse {
+        val pageable = PageRequest.of(
+            (page - 1).toInt(),
+            size.toInt(),
+        )
+
+        val articles = articleRepository.findAll(boardId, pageable)
+            .map(ArticleResponse::from)
+
+        val countLimit = PageLimitCalculator.calculatePageLimit(
+            page = page,
+            pageSize = size,
+            movablePageCount = 10L
+        )
+
+        val totalCount = articleRepository.countAll(boardId)
+            .coerceAtMost(countLimit)
+
+        return ArticlePageResponse.of(
+            items = articles,
+            page = page,
+            size = size,
+            totalCount = totalCount
+        )
     }
 
     @Transactional

@@ -1,7 +1,9 @@
 package kuke.board.article.controller
 
 import kuke.board.article.dto.request.ArticleCreateRequest
+import kuke.board.article.dto.request.ArticlePageRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
+import kuke.board.article.dto.response.ArticlePageResponse
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.service.ArticleService
 import org.springframework.web.bind.annotation.*
@@ -24,6 +26,17 @@ class ArticleController(
         @PathVariable articleId: Long
     ): ArticleResponse {
         return articleService.read(articleId)
+    }
+
+    @GetMapping
+    fun readAll(
+        request: ArticlePageRequest,
+    ): ArticlePageResponse {
+        return articleService.readAll(
+            boardId = request.boardId,
+            page = request.page,
+            size = request.size
+        )
     }
 
     @PutMapping("/{articleId}")
