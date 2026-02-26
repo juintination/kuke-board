@@ -5,11 +5,14 @@ spring:
   application:
     name: kuke-board-article-service
 
+  config:
+    import: file:.env.${spring.profiles.active}[.properties]
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${local.db.host}:${local.db.port}/${local.db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
-    username: ${local.db.username}
-    password: ${local.db.password}
+    url: jdbc:mysql://${db.host}:${db.port}/${db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
+    username: ${db.username}
+    password: ${db.password}
 
   jpa:
     hibernate:
