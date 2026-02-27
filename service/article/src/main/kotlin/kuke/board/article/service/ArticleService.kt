@@ -8,6 +8,7 @@ import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
 import kuke.board.common.snowflake.Snowflake
 import kuke.board.dto.response.CommonPageResponse
+import kuke.board.util.PageLimitCalculator
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
