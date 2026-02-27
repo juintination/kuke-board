@@ -1,6 +1,7 @@
 package kuke.board.article.service
 
 import kuke.board.article.dto.request.ArticleCreateRequest
+import kuke.board.article.dto.request.ArticlePageRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.article.dto.response.ArticlePageResponse
 import kuke.board.article.dto.response.ArticleResponse
@@ -45,20 +46,19 @@ class ArticleService(
     @Transactional(readOnly = true)
     fun readAll(
         boardId: Long,
-        page: Long,
-        size: Long
+        request: ArticlePageRequest,
     ): ArticlePageResponse {
         val pageable = PageRequest.of(
-            (page - 1).toInt(),
-            size.toInt(),
+            (request.page - 1).toInt(),
+            request.size.toInt(),
         )
 
         val articles = articleRepository.findAll(boardId, pageable)
             .map(ArticleResponse::from)
 
         val countLimit = PageLimitCalculator.calculatePageLimit(
-            page = page,
-            pageSize = size,
+            page = request.page,
+            pageSize = request.size,
             movablePageCount = 10L
         )
 
@@ -67,8 +67,7 @@ class ArticleService(
 
         return ArticlePageResponse.of(
             items = articles,
-            page = page,
-            size = size,
+            request = request,
             totalCount = totalCount
         )
     }

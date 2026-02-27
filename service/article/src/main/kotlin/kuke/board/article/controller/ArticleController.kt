@@ -30,12 +30,12 @@ class ArticleController(
 
     @GetMapping
     fun readAll(
+        @RequestParam boardId: Long,
         request: ArticlePageRequest,
     ): ArticlePageResponse {
         return articleService.readAll(
-            boardId = request.boardId,
-            page = request.page,
-            size = request.size
+            boardId = boardId,
+            request = request,
         )
     }
 

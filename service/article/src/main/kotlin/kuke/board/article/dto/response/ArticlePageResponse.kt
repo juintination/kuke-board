@@ -1,5 +1,7 @@
 package kuke.board.article.dto.response
 
+import kuke.board.article.dto.request.ArticlePageRequest
+
 data class ArticlePageResponse(
     val items: List<ArticleResponse>,
     val page: Long,
@@ -10,15 +12,14 @@ data class ArticlePageResponse(
     companion object {
         fun of(
             items: List<ArticleResponse>,
-            page: Long,
-            size: Long,
+            request: ArticlePageRequest,
             totalCount: Long,
         ): ArticlePageResponse {
-            val totalPages = if (totalCount == 0L) 0L else ((totalCount - 1) / size) + 1
+            val totalPages = if (totalCount == 0L) 0L else ((totalCount - 1) / request.size) + 1
             return ArticlePageResponse(
                 items = items,
-                page = page,
-                size = size,
+                page = request.page,
+                size = request.size,
                 totalCount = totalCount,
                 totalPages = totalPages,
             )
