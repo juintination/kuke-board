@@ -3,11 +3,11 @@ package kuke.board.article.service
 import kuke.board.article.dto.request.ArticleCreateRequest
 import kuke.board.article.dto.request.ArticlePageRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
-import kuke.board.article.dto.response.ArticlePageResponse
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
 import kuke.board.common.snowflake.Snowflake
+import kuke.board.dto.response.CommonPageResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -45,15 +45,14 @@ class ArticleService(
 
     @Transactional(readOnly = true)
     fun readAll(
-        boardId: Long,
         request: ArticlePageRequest,
-    ): ArticlePageResponse {
+    ): CommonPageResponse<ArticleResponse> {
         val pageable = PageRequest.of(
             (request.page - 1).toInt(),
             request.size.toInt(),
         )
 
-        val articles = articleRepository.findAll(boardId, pageable)
+        val articles = articleRepository.findAll(request.boardId, pageable)
             .map(ArticleResponse::from)
 
         val countLimit = PageLimitCalculator.calculatePageLimit(
@@ -62,10 +61,10 @@ class ArticleService(
             movablePageCount = 10L
         )
 
-        val totalCount = articleRepository.countAll(boardId)
+        val totalCount = articleRepository.countAll(request.boardId)
             .coerceAtMost(countLimit)
 
-        return ArticlePageResponse.of(
+        return CommonPageResponse.of(
             items = articles,
             request = request,
             totalCount = totalCount

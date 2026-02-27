@@ -4,4 +4,5 @@ dependencies {
     runtimeOnly("com.mysql:mysql-connector-j")
     implementation(project(":common:snowflake"))
     implementation(project(":common:jpa"))
+    implementation(project(":common:pagination"))
 }

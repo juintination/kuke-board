@@ -3,6 +3,7 @@ rootProject.name = "kuke-board"
 include("common")
 include("common:snowflake")
 include("common:jpa")
+include("common:pagination")
 include("service")
 include("service:article")
 include("service:comment")
