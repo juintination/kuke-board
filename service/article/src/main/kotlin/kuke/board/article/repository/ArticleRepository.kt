@@ -27,4 +27,19 @@ interface ArticleRepository : JpaRepository<Article, Long> {
         """
     )
     fun countAll(boardId: Long): Long
+
+    @Query(
+        """
+        select a
+        from Article a
+        where a.boardId = :boardId
+          and (:lastId is null or a.id < :lastId)
+        order by a.id desc
+        """
+    )
+    fun findAllByCursor(
+        boardId: Long,
+        lastId: Long?,
+        pageable: Pageable,
+    ): List<Article>
 }
