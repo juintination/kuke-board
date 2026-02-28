@@ -1,2 +1,24 @@
 server:
   port: 8081
+
+spring:
+  application:
+    name: kuke-board-comment-service
+
+  config:
+    import: file:.env.${spring.profiles.active}[.properties]
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${db.host}:${db.port}/${db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
+    username: ${db.username}
+    password: ${db.password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    open-in-view: false
