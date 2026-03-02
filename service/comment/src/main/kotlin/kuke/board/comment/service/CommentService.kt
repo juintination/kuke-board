@@ -60,11 +60,16 @@ class CommentService(
 
     private fun findParent(
         parentId: Long?,
-    ): Comment? {
-        return parentId?.let {
+    ): Comment? =
+        parentId?.let {
             commentRepository.findByIdOrNull(it)
+                ?.also {
+                    if (!it.isRoot()) {
+                        throw IllegalArgumentException("2depth까지만 허용됩니다. parentId: $parentId")
+                    }
+                }
+                ?: throw IllegalArgumentException("존재하지 않는 부모 댓글입니다. parentId: $parentId")
         }
-    }
 
     private fun getCommentOrThrow(
         commentId: Long
