@@ -8,6 +8,7 @@ import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
+import java.time.LocalDateTime
 
 @Entity
 @Table(name = "comment")
@@ -30,6 +31,9 @@ class Comment private constructor(
 
     @Column(length = 1000, nullable = false)
     var content: String,
+
+    @Column(name = "tombstoned_at", columnDefinition = "DATETIME(6)")
+    var tombstonedAt: LocalDateTime? = null,
 ) : BaseEntity() {
     companion object {
         fun create(
@@ -52,10 +56,18 @@ class Comment private constructor(
     fun update(
         request: CommentUpdateRequest,
     ) {
+        if (isTombstoned()) {
+            throw IllegalStateException("삭제된 댓글은 수정할 수 없습니다. commentId: $id")
+        }
         this.content = request.content
     }
 
     fun isRoot(): Boolean = parentId == null
 
-    fun isDeleted(): Boolean = deletedAt != null
+    fun isTombstoned(): Boolean = tombstonedAt != null
+
+    fun tombstone() {
+        if (isTombstoned()) return
+        tombstonedAt = LocalDateTime.now()
+    }
 }

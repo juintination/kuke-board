@@ -9,7 +9,7 @@ data class CommentResponse(
     val writerId: Long,
     val parentId: Long?,
     val content: String,
-    val isDeleted: Boolean,
+    val isTombstoned: Boolean,
     val createdAt: LocalDateTime,
     val modifiedAt: LocalDateTime,
 ) {
@@ -23,7 +23,7 @@ data class CommentResponse(
                 writerId = comment.writerId,
                 parentId = comment.parentId,
                 content = comment.content,
-                isDeleted = comment.isDeleted(),
+                isTombstoned = comment.isTombstoned(),
                 createdAt = comment.createdAt,
                 modifiedAt = comment.modifiedAt,
             )

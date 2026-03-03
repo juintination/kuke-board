@@ -50,12 +50,26 @@ class CommentService(
         return CommentResponse.from(comment)
     }
 
+    /**
+     * 삭제 정책
+     * - 자식이 없는 댓글: 완전 삭제
+     * - 자식이 있는 댓글: 내용 삭제 + tombstone 처리
+     * - tombstone 처리된 댓글은 자식이 없어질 때까지 남아있다가, 자식이 모두 삭제되면 완전 삭제
+     */
     @Transactional
     fun delete(
         commentId: Long,
     ) {
         val comment = getCommentOrThrow(commentId)
+
+        // 자식이 있으면 tombstone 처리
+        if (commentRepository.existsByParentId(commentId)) {
+            comment.tombstone()
+            return
+        }
+
         commentRepository.delete(comment)
+        cascadeDeleteUpIfNeeded(comment)
     }
 
     private fun findParent(
@@ -67,9 +81,30 @@ class CommentService(
                     if (!it.isRoot()) {
                         throw IllegalArgumentException("2depth까지만 허용됩니다. parentId: $parentId")
                     }
+                    if (it.isTombstoned()) {
+                        throw IllegalArgumentException("삭제된 댓글에는 답글을 달 수 없습니다. parentId: $parentId")
+                    }
                 }
                 ?: throw IllegalArgumentException("존재하지 않는 부모 댓글입니다. parentId: $parentId")
         }
+
+    private fun cascadeDeleteUpIfNeeded(
+        deletedChild: Comment
+    ) {
+        // root면 종료
+        val parentId = deletedChild.parentId ?: return
+        val parentComment = commentRepository.findByIdOrNull(parentId) ?: return
+
+        // parent가 tombstone이 아니면 정리 대상 아님
+        if (!parentComment.isTombstoned()) return
+
+        // parent에게 남아있는 자식이 있으면 정리 불가
+        if (commentRepository.existsByParentId(parentComment.id)) return
+
+        // parent를 삭제 처리하고, 위로 재귀
+        commentRepository.delete(parentComment)
+        cascadeDeleteUpIfNeeded(parentComment)
+    }
 
     private fun getCommentOrThrow(
         commentId: Long
