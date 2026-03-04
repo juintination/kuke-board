@@ -4,8 +4,10 @@ import kuke.board.comment.dto.request.CommentCreateRequest
 import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.entity.Comment
+import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.repository.CommentRepository
 import kuke.board.common.snowflake.Snowflake
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -21,13 +23,26 @@ class CommentService(
     fun create(
         request: CommentCreateRequest,
     ): CommentResponse {
-        val parent = findParent(request.parentId)
+        val parent = findParent(
+            articleId = request.articleId,
+            parentId = request.parentId,
+        )
+        val parentCommentPath = parent?.let {
+            CommentPath.create(it.path.path)
+        } ?: CommentPath.create("")
+
         val comment = Comment.create(
             id = snowflake.nextId(),
             articleId = request.articleId,
             writerId = request.writerId,
             parentId = parent?.id,
             content = request.content,
+            path = parentCommentPath.createChildPath(
+                findDescendantsTopPath(
+                    articleId = request.articleId,
+                    prefix = parentCommentPath.path,
+                )
+            ),
         )
         return CommentResponse.from(commentRepository.save(comment))
     }
@@ -73,20 +88,26 @@ class CommentService(
     }
 
     private fun findParent(
+        articleId: Long,
         parentId: Long?,
-    ): Comment? =
-        parentId?.let {
-            commentRepository.findByIdOrNull(it)
-                ?.also {
-                    if (!it.isRoot()) {
-                        throw IllegalArgumentException("2depth까지만 허용됩니다. parentId: $parentId")
-                    }
-                    if (it.isTombstoned()) {
-                        throw IllegalArgumentException("삭제된 댓글에는 답글을 달 수 없습니다. parentId: $parentId")
-                    }
-                }
-                ?: throw IllegalArgumentException("존재하지 않는 부모 댓글입니다. parentId: $parentId")
+    ): Comment? {
+        if (parentId == null) {
+            return null
         }
+
+        val parent = commentRepository.findByIdOrNull(parentId)
+            ?: throw IllegalArgumentException("존재하지 않는 부모 댓글입니다. parentId: $parentId")
+
+        if (parent.articleId != articleId) {
+            throw IllegalArgumentException("부모 댓글의 게시글 Id가 일치하지 않습니다. parentId: $parentId")
+        }
+
+        if (parent.isTombstoned()) {
+            throw IllegalArgumentException("삭제된 댓글에는 답글을 달 수 없습니다. parentId: $parentId")
+        }
+
+        return parent
+    }
 
     private fun cascadeDeleteUpIfNeeded(
         deletedChild: Comment
@@ -110,4 +131,15 @@ class CommentService(
         commentId: Long
     ): Comment = commentRepository.findByIdOrNull(commentId)
         ?: throw IllegalArgumentException("존재하지 않는 댓글입니다. commentId: $commentId")
+
+    private fun findDescendantsTopPath(
+        articleId: Long,
+        prefix: String,
+    ): String? {
+        return commentRepository.findTopPathByPrefix(
+            articleId = articleId,
+            prefix = prefix,
+            pageable = PageRequest.of(0, 1)
+        ).firstOrNull()
+    }
 }

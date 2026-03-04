@@ -1,9 +1,6 @@
 package kuke.board.comment.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
@@ -19,6 +16,9 @@ class Comment private constructor(
     @Id
     @Column(columnDefinition = "BIGINT UNSIGNED")
     val id: Long,
+
+    @Embedded
+    val path: CommentPath,
 
     @Column(name = "parent_id", columnDefinition = "BIGINT UNSIGNED")
     val parentId: Long?,
@@ -42,6 +42,7 @@ class Comment private constructor(
             articleId: Long,
             writerId: Long,
             content: String,
+            path: CommentPath,
         ): Comment {
             return Comment(
                 id = id,
@@ -49,6 +50,7 @@ class Comment private constructor(
                 articleId = articleId,
                 writerId = writerId,
                 content = content,
+                path = path,
             )
         }
     }
@@ -61,8 +63,6 @@ class Comment private constructor(
         }
         this.content = request.content
     }
-
-    fun isRoot(): Boolean = parentId == null
 
     fun isTombstoned(): Boolean = tombstonedAt != null
 
