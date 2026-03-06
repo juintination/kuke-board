@@ -1,12 +1,15 @@
 package kuke.board.comment.service
 
 import kuke.board.comment.dto.request.CommentCreateRequest
+import kuke.board.comment.dto.request.CommentCursorRequest
 import kuke.board.comment.dto.request.CommentUpdateRequest
+import kuke.board.comment.dto.response.CommentListResponse
 import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.repository.CommentRepository
 import kuke.board.common.snowflake.Snowflake
+import kuke.board.dto.response.CommonCursorResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -45,6 +48,62 @@ class CommentService(
             ),
         )
         return CommentResponse.from(commentRepository.save(comment))
+    }
+
+    @Transactional(readOnly = true)
+    fun readAllCursor(
+        request: CommentCursorRequest,
+    ): CommonCursorResponse<CommentListResponse> {
+
+        val pageable = PageRequest.of(
+            0,
+            request.size + 1
+        )
+
+        val fetched = if (request.parentId == null) {
+            commentRepository.findAllRootByCursor(
+                articleId = request.articleId,
+                lastId = request.cursor,
+                pageable = pageable,
+            )
+        } else {
+            validateParent(
+                articleId = request.articleId,
+                parentId = request.parentId,
+            )
+
+            commentRepository.findAllChildByCursor(
+                articleId = request.articleId,
+                parentId = request.parentId,
+                lastId = request.cursor,
+                pageable = pageable,
+            )
+        }
+
+        val hasNext = fetched.size > request.size
+        val pageItems = fetched.take(request.size)
+
+        val commentIds = pageItems.map { it.id }
+        val parentIdsWithChildren = if (commentIds.isEmpty()) {
+            emptySet()
+        } else {
+            commentRepository.findExistingParentIds(commentIds).toSet()
+        }
+
+        val items = pageItems.map { comment ->
+            CommentListResponse.from(
+                comment = comment,
+                hasChildren = comment.id in parentIdsWithChildren,
+            )
+        }
+
+        val nextCursor = if (hasNext) pageItems.last().id else null
+
+        return CommonCursorResponse.of(
+            items = items,
+            nextCursorId = nextCursor,
+            hasNext = hasNext,
+        )
     }
 
     @Transactional(readOnly = true)
@@ -107,6 +166,18 @@ class CommentService(
         }
 
         return parent
+    }
+
+    private fun validateParent(
+        articleId: Long,
+        parentId: Long,
+    ) {
+        val parent = commentRepository.findByIdOrNull(parentId)
+            ?: throw IllegalArgumentException("존재하지 않는 부모 댓글입니다. parentId: $parentId")
+
+        if (parent.articleId != articleId) {
+            throw IllegalArgumentException("부모 댓글의 articleId가 일치하지 않습니다. parentId: $parentId")
+        }
     }
 
     private fun cascadeDeleteUpIfNeeded(

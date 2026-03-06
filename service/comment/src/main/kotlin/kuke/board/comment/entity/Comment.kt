@@ -8,7 +8,15 @@ import org.hibernate.annotations.SQLRestriction
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "comment")
+@Table(
+    name = "comment",
+    indexes = [
+        Index(
+            name = "idx_comment_article_id_parent_id_deleted_at_id",
+            columnList = "article_id, parent_id, deleted_at, id"
+        )
+    ]
+)
 @SQLRestriction("deleted_at is null")
 @SQLDelete(sql = "update comment set deleted_at = now() where id = ?")
 class Comment private constructor(

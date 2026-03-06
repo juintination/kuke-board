@@ -1,9 +1,12 @@
 package kuke.board.comment.controller
 
 import kuke.board.comment.dto.request.CommentCreateRequest
+import kuke.board.comment.dto.request.CommentCursorRequest
 import kuke.board.comment.dto.request.CommentUpdateRequest
+import kuke.board.comment.dto.response.CommentListResponse
 import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.service.CommentService
+import kuke.board.dto.response.CommonCursorResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -24,6 +27,13 @@ class CommentController(
         @PathVariable commentId: Long
     ): CommentResponse {
         return commentService.read(commentId)
+    }
+
+    @GetMapping("/cursor")
+    fun readAllCursor(
+        request: CommentCursorRequest,
+    ): CommonCursorResponse<CommentListResponse> {
+        return commentService.readAllCursor(request)
     }
 
     @PutMapping("/{commentId}")

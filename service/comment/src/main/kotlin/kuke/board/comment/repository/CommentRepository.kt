@@ -23,4 +23,48 @@ interface CommentRepository : JpaRepository<Comment, Long> {
         prefix: String,
         pageable: Pageable,
     ): List<String>
+
+    @Query(
+        """
+        select distinct c.parentId
+        from Comment c
+        where c.parentId in :parentIds
+        """
+    )
+    fun findExistingParentIds(
+        parentIds: Collection<Long>,
+    ): List<Long>
+
+    @Query(
+        """
+        select c
+        from Comment c
+        where c.articleId = :articleId
+          and c.parentId is null
+          and (:lastId is null or c.id < :lastId)
+        order by c.id desc
+        """
+    )
+    fun findAllRootByCursor(
+        articleId: Long,
+        lastId: Long?,
+        pageable: Pageable,
+    ): List<Comment>
+
+    @Query(
+        """
+        select c
+        from Comment c
+        where c.articleId = :articleId
+          and c.parentId = :parentId
+          and (:lastId is null or c.id > :lastId)
+        order by c.id asc
+        """
+    )
+    fun findAllChildByCursor(
+        articleId: Long,
+        parentId: Long,
+        lastId: Long?,
+        pageable: Pageable,
+    ): List<Comment>
 }
