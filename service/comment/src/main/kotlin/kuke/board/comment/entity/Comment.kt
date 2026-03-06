@@ -28,7 +28,7 @@ class Comment private constructor(
     @Embedded
     val path: CommentPath,
 
-    @Column(name = "parent_id", columnDefinition = "BIGINT UNSIGNED")
+    @Column(columnDefinition = "BIGINT UNSIGNED")
     val parentId: Long?,
 
     @Column(columnDefinition = "BIGINT UNSIGNED", nullable = false)
@@ -40,7 +40,7 @@ class Comment private constructor(
     @Column(length = 1000, nullable = false)
     var content: String,
 
-    @Column(name = "tombstoned_at", columnDefinition = "DATETIME(6)")
+    @Column(columnDefinition = "DATETIME(6)")
     var tombstonedAt: LocalDateTime? = null,
 ) : BaseEntity() {
     companion object {
@@ -51,16 +51,14 @@ class Comment private constructor(
             writerId: Long,
             content: String,
             path: CommentPath,
-        ): Comment {
-            return Comment(
-                id = id,
-                parentId = parentId,
-                articleId = articleId,
-                writerId = writerId,
-                content = content,
-                path = path,
-            )
-        }
+        ) = Comment(
+            id = id,
+            parentId = parentId,
+            articleId = articleId,
+            writerId = writerId,
+            content = content,
+            path = path,
+        )
     }
 
     fun update(

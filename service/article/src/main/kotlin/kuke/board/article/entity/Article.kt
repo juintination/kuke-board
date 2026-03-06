@@ -43,15 +43,13 @@ class Article private constructor(
             content: String,
             boardId: Long,
             writerId: Long
-        ): Article {
-            return Article(
-                id = id,
-                title = title,
-                content = content,
-                boardId = boardId,
-                writerId = writerId
-            )
-        }
+        ) = Article(
+            id = id,
+            title = title,
+            content = content,
+            boardId = boardId,
+            writerId = writerId
+        )
     }
 
     fun update(
