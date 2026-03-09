@@ -9,7 +9,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ArticleLikeService(
-    private val articleLikeRepository: ArticleLikeRepository
+    private val articleLikeRepository: ArticleLikeRepository,
+    private val articleLikeCountService: ArticleLikeCountService,
 ) {
 
     private val snowflake = Snowflake()
@@ -27,18 +28,28 @@ class ArticleLikeService(
         val articleLike = if (existingLike != null) {
             if (existingLike.isTombstoned()) {
                 existingLike.restore()
+                articleLikeCountService.increase(
+                    articleId = articleId,
+                )
             } else {
                 existingLike.tombstone()
+                articleLikeCountService.decrease(
+                    articleId = articleId,
+                )
             }
             existingLike
         } else {
-            articleLikeRepository.save(
+            val newLike = articleLikeRepository.save(
                 ArticleLike.create(
                     id = snowflake.nextId(),
                     articleId = articleId,
                     userId = userId,
                 )
             )
+            articleLikeCountService.increase(
+                articleId = articleId,
+            )
+            newLike
         }
 
         return ArticleLikeResponse.from(articleLike)
