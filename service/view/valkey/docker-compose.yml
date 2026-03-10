@@ -1,0 +1,35 @@
+version: "3.8"
+
+services:
+  valkey-primary:
+    image: valkey/valkey:latest
+    container_name: valkey-primary
+    ports:
+      - "${VALKEY_PRIMARY_PORT}:6379"
+    volumes:
+      - valkey-primary-data:/data
+    command: >
+      valkey-server
+      --appendonly yes
+      --bind 0.0.0.0
+      --port 6379
+
+  valkey-replica:
+    image: valkey/valkey:latest
+    container_name: valkey-replica
+    ports:
+      - "${VALKEY_REPLICA_PORT}:6379"
+    volumes:
+      - valkey-replica-data:/data
+    depends_on:
+      - valkey-primary
+    command: >
+      valkey-server
+      --appendonly yes
+      --bind 0.0.0.0
+      --port 6379
+      --replicaof valkey-primary 6379
+
+volumes:
+  valkey-primary-data:
+  valkey-replica-data:
