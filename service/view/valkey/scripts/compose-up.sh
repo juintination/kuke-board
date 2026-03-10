@@ -26,13 +26,13 @@ echo "Waiting for Valkey to become ready..."
 # primary 준비 확인
 
 until docker exec valkey-primary valkey-cli ping >/dev/null 2>&1; do
-sleep 1
+  sleep 1
 done
 
 # replica 준비 확인
 
 until docker exec valkey-replica valkey-cli ping >/dev/null 2>&1; do
-sleep 1
+  sleep 1
 done
 
 echo "Valkey containers are ready."
