@@ -25,10 +25,7 @@ class ArticleService(
         request: ArticleCreateRequest
     ): ArticleResponse {
         val article = Article.create(
-            title = request.title,
-            content = request.content,
-            boardId = request.boardId,
-            writerId = request.writerId,
+            request = request,
         )
 
         return ArticleResponse.from(articleRepository.save(article))

@@ -2,6 +2,7 @@ package kuke.board.comment.entity
 
 import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
+import kuke.board.comment.dto.request.CommentCreateRequest
 import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
@@ -47,16 +48,13 @@ class Comment private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
-            parentId: Long?,
-            articleId: Long,
-            writerId: Long,
-            content: String,
+            request: CommentCreateRequest,
             path: CommentPath,
         ) = Comment(
-            parentId = parentId,
-            articleId = articleId,
-            writerId = writerId,
-            content = content,
+            parentId = request.parentId,
+            articleId = request.articleId,
+            writerId = request.writerId,
+            content = request.content,
             path = path,
         )
     }

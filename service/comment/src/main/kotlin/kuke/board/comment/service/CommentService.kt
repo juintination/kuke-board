@@ -32,10 +32,7 @@ class CommentService(
         } ?: CommentPath.create("")
 
         val comment = Comment.create(
-            articleId = request.articleId,
-            writerId = request.writerId,
-            parentId = parent?.id,
-            content = request.content,
+            request = request,
             path = parentCommentPath.createChildPath(
                 findDescendantsTopPath(
                     articleId = request.articleId,

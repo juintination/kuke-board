@@ -2,6 +2,7 @@ package kuke.board.article.entity
 
 import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
+import kuke.board.article.dto.request.ArticleCreateRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
@@ -40,15 +41,12 @@ class Article private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
-            title: String,
-            content: String,
-            boardId: Long,
-            writerId: Long
+            request: ArticleCreateRequest,
         ) = Article(
-            title = title,
-            content = content,
-            boardId = boardId,
-            writerId = writerId,
+            title = request.title,
+            content = request.content,
+            boardId = request.boardId,
+            writerId = request.writerId,
         )
     }
 
