@@ -16,7 +16,7 @@ data class ArticleResponse(
         fun from(
             article: Article
         ) = ArticleResponse(
-            id = article.id,
+            id = article.id!!,
             title = article.title,
             content = article.content,
             boardId = article.boardId,

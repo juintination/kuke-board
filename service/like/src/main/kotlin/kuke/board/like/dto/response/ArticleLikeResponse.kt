@@ -13,7 +13,7 @@ data class ArticleLikeResponse(
             articleLike: ArticleLike,
         ): ArticleLikeResponse {
             return ArticleLikeResponse(
-                id = articleLike.id,
+                id = articleLike.id!!,
                 articleId = articleLike.articleId,
                 userId = articleLike.userId,
                 isLiked = !articleLike.isTombstoned(),

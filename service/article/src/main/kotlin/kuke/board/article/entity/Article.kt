@@ -1,5 +1,6 @@
 package kuke.board.article.entity
 
+import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
 import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
@@ -21,8 +22,9 @@ import org.hibernate.annotations.SQLRestriction
 class Article private constructor(
 
     @Id
+    @Tsid
     @Column(columnDefinition = "BIGINT UNSIGNED")
-    val id: Long,
+    val id: Long? = null,
 
     @Column(length = 100, nullable = false)
     var title: String,
@@ -38,17 +40,15 @@ class Article private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
-            id: Long,
             title: String,
             content: String,
             boardId: Long,
             writerId: Long
         ) = Article(
-            id = id,
             title = title,
             content = content,
             boardId = boardId,
-            writerId = writerId
+            writerId = writerId,
         )
     }
 

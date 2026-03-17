@@ -1,5 +1,6 @@
 package kuke.board.like.entity
 
+import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
 import kuke.board.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
@@ -21,8 +22,9 @@ import java.time.LocalDateTime
 class ArticleLike private constructor(
 
     @Id
+    @Tsid
     @Column(columnDefinition = "BIGINT UNSIGNED")
-    val id: Long,
+    val id: Long? = null,
 
     @Column(columnDefinition = "BIGINT UNSIGNED", nullable = false)
     val articleId: Long,
@@ -35,11 +37,9 @@ class ArticleLike private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
-            id: Long,
             articleId: Long,
             userId: Long,
         ) = ArticleLike(
-            id = id,
             articleId = articleId,
             userId = userId,
         )

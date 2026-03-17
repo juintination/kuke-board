@@ -1,5 +1,6 @@
 package kuke.board.comment.entity
 
+import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
 import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.jpa.entity.BaseEntity
@@ -22,8 +23,9 @@ import java.time.LocalDateTime
 class Comment private constructor(
 
     @Id
+    @Tsid
     @Column(columnDefinition = "BIGINT UNSIGNED")
-    val id: Long,
+    val id: Long? = null,
 
     @Embedded
     val path: CommentPath,
@@ -45,14 +47,12 @@ class Comment private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
-            id: Long,
             parentId: Long?,
             articleId: Long,
             writerId: Long,
             content: String,
             path: CommentPath,
         ) = Comment(
-            id = id,
             parentId = parentId,
             articleId = articleId,
             writerId = writerId,

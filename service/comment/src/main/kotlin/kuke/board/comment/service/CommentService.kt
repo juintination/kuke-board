@@ -8,7 +8,6 @@ import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.repository.CommentRepository
-import kuke.board.common.snowflake.Snowflake
 import kuke.board.dto.response.CommonCursorResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
@@ -19,8 +18,6 @@ import org.springframework.transaction.annotation.Transactional
 class CommentService(
     private val commentRepository: CommentRepository,
 ) {
-
-    private val snowflake = Snowflake()
 
     @Transactional
     fun create(
@@ -35,7 +32,6 @@ class CommentService(
         } ?: CommentPath.create("")
 
         val comment = Comment.create(
-            id = snowflake.nextId(),
             articleId = request.articleId,
             writerId = request.writerId,
             parentId = parent?.id,
@@ -83,7 +79,7 @@ class CommentService(
         val hasNext = fetched.size > request.size
         val pageItems = fetched.take(request.size)
 
-        val commentIds = pageItems.map { it.id }
+        val commentIds = pageItems.map { it.id!! }
         val parentIdsWithChildren = if (commentIds.isEmpty()) {
             emptySet()
         } else {
@@ -191,7 +187,7 @@ class CommentService(
         if (!parentComment.isTombstoned()) return
 
         // parent에게 남아있는 자식이 있으면 정리 불가
-        if (commentRepository.existsByParentId(parentComment.id)) return
+        if (commentRepository.existsByParentId(parentComment.id!!)) return
 
         // parent를 삭제 처리하고, 위로 재귀
         commentRepository.delete(parentComment)

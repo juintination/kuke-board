@@ -19,7 +19,7 @@ data class CommentResponse(
             comment: Comment,
         ): CommentResponse {
             return CommentResponse(
-                id = comment.id,
+                id = comment.id!!,
                 path = comment.path.path,
                 articleId = comment.articleId,
                 writerId = comment.writerId,

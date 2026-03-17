@@ -1,16 +1,15 @@
 package kuke.board.comment.service
 
+import io.hypersistence.tsid.TSID
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.*
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.repository.CommentRepository
-import kuke.board.common.snowflake.Snowflake
 import org.springframework.data.repository.findByIdOrNull
 
 class CommentServiceTest : BehaviorSpec({
 
-    val snowflake = Snowflake()
     val commentRepository = mockk<CommentRepository>()
 
     val commentService = CommentService(
@@ -18,7 +17,7 @@ class CommentServiceTest : BehaviorSpec({
     )
 
     fun commentFixture(
-        id: Long = snowflake.nextId(),
+        id: Long = TSID.fast().toLong(),
         parentId: Long? = null,
         tombstoned: Boolean = false,
     ): Comment {

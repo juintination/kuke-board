@@ -1,6 +1,5 @@
 package kuke.board.like.service
 
-import kuke.board.common.snowflake.Snowflake
 import kuke.board.like.dto.response.ArticleLikeResponse
 import kuke.board.like.entity.ArticleLike
 import kuke.board.like.repository.ArticleLikeRepository
@@ -12,8 +11,6 @@ class ArticleLikeService(
     private val articleLikeRepository: ArticleLikeRepository,
     private val articleLikeCountService: ArticleLikeCountService,
 ) {
-
-    private val snowflake = Snowflake()
 
     @Transactional
     fun toggle(
@@ -41,7 +38,6 @@ class ArticleLikeService(
         } else {
             val newLike = articleLikeRepository.save(
                 ArticleLike.create(
-                    id = snowflake.nextId(),
                     articleId = articleId,
                     userId = userId,
                 )

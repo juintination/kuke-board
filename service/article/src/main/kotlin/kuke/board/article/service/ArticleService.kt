@@ -7,7 +7,6 @@ import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
-import kuke.board.common.snowflake.Snowflake
 import kuke.board.dto.response.CommonCursorResponse
 import kuke.board.dto.response.CommonPageResponse
 import kuke.board.util.PageLimitCalculator
@@ -21,14 +20,11 @@ class ArticleService(
     private val articleRepository: ArticleRepository
 ) {
 
-    private val snowflake = Snowflake()
-
     @Transactional
     fun create(
         request: ArticleCreateRequest
     ): ArticleResponse {
         val article = Article.create(
-            id = snowflake.nextId(),
             title = request.title,
             content = request.content,
             boardId = request.boardId,

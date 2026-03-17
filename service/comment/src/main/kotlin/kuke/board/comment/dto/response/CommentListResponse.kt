@@ -20,7 +20,7 @@ data class CommentListResponse(
             hasChildren: Boolean,
         ): CommentListResponse {
             return CommentListResponse(
-                id = comment.id,
+                id = comment.id!!,
                 parentId = comment.parentId,
                 articleId = comment.articleId,
                 writerId = comment.writerId,
