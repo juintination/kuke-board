@@ -6,7 +6,7 @@ import kuke.board.comment.dto.request.CommentUpdateRequest
 import kuke.board.comment.dto.response.CommentListResponse
 import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.service.CommentService
-import kuke.board.dto.response.CommonCursorResponse
+import kuke.board.common.pagination.dto.response.CommonCursorResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController

@@ -1,6 +1,6 @@
 package kuke.board.article.dto.request
 
-import kuke.board.dto.request.CommonPageRequest
+import kuke.board.common.pagination.dto.request.CommonPageRequest
 
 data class ArticlePageRequest(
     val boardId: Long,

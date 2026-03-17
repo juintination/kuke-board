@@ -1,4 +1,4 @@
-package kuke.board.jpa.entity
+package kuke.board.common.jpa.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.EntityListeners

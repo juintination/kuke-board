@@ -8,7 +8,7 @@ import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.repository.CommentRepository
-import kuke.board.dto.response.CommonCursorResponse
+import kuke.board.common.pagination.dto.response.CommonCursorResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service

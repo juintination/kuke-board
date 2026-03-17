@@ -7,9 +7,9 @@ import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
-import kuke.board.dto.response.CommonCursorResponse
-import kuke.board.dto.response.CommonPageResponse
-import kuke.board.util.PageLimitCalculator
+import kuke.board.common.pagination.dto.response.CommonCursorResponse
+import kuke.board.common.pagination.dto.response.CommonPageResponse
+import kuke.board.common.pagination.util.PageLimitCalculator
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service

@@ -1,4 +1,4 @@
-package kuke.board.util
+package kuke.board.common.pagination.util
 
 object PageLimitCalculator {
     fun calculatePageLimit(

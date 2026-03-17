@@ -1,6 +1,6 @@
-package kuke.board.dto.response
+package kuke.board.common.pagination.dto.response
 
-import kuke.board.dto.request.CommonPageRequest
+import kuke.board.common.pagination.dto.request.CommonPageRequest
 
 data class CommonPageResponse<T>(
     val items: List<T>,

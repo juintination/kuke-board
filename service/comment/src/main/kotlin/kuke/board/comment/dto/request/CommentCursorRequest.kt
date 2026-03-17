@@ -1,6 +1,6 @@
 package kuke.board.comment.dto.request
 
-import kuke.board.dto.request.CommonCursorRequest
+import kuke.board.common.pagination.dto.request.CommonCursorRequest
 
 data class CommentCursorRequest(
     val articleId: Long,

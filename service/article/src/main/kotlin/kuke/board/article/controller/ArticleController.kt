@@ -6,8 +6,8 @@ import kuke.board.article.dto.request.ArticlePageRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.service.ArticleService
-import kuke.board.dto.response.CommonCursorResponse
-import kuke.board.dto.response.CommonPageResponse
+import kuke.board.common.pagination.dto.response.CommonCursorResponse
+import kuke.board.common.pagination.dto.response.CommonPageResponse
 import org.springframework.web.bind.annotation.*
 
 @RestController

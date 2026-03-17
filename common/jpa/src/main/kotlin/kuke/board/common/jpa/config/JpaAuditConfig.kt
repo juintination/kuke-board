@@ -1,4 +1,4 @@
-package kuke.board.jpa.config
+package kuke.board.common.jpa.config
 
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing

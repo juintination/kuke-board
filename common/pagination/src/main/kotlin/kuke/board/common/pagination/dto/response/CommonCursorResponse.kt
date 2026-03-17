@@ -1,4 +1,4 @@
-package kuke.board.dto.response
+package kuke.board.common.pagination.dto.response
 
 data class CommonCursorResponse<T>(
     val items: List<T>,

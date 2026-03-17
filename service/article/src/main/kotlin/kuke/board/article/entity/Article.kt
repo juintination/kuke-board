@@ -4,7 +4,7 @@ import io.hypersistence.utils.hibernate.id.Tsid
 import jakarta.persistence.*
 import kuke.board.article.dto.request.ArticleCreateRequest
 import kuke.board.article.dto.request.ArticleUpdateRequest
-import kuke.board.jpa.entity.BaseEntity
+import kuke.board.common.jpa.entity.BaseEntity
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
 
