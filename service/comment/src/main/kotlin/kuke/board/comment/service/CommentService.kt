@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class CommentService(
     private val commentRepository: CommentRepository,
+    private val articleCommentCountService: ArticleCommentCountService,
 ) {
 
     @Transactional
@@ -39,6 +40,10 @@ class CommentService(
                     prefix = parentCommentPath.path,
                 )
             ),
+        )
+
+        articleCommentCountService.increase(
+            articleId = request.articleId,
         )
         return CommentResponse.from(commentRepository.save(comment))
     }
@@ -136,7 +141,9 @@ class CommentService(
         }
 
         commentRepository.delete(comment)
-        cascadeDeleteUpIfNeeded(comment)
+        cascadeDeleteUpIfNeeded(
+            comment = comment,
+        )
     }
 
     private fun findParent(
@@ -174,10 +181,14 @@ class CommentService(
     }
 
     private fun cascadeDeleteUpIfNeeded(
-        deletedChild: Comment
+        comment: Comment
     ) {
+        articleCommentCountService.decrease(
+            articleId = comment.articleId,
+        )
+
         // root면 종료
-        val parentId = deletedChild.parentId ?: return
+        val parentId = comment.parentId ?: return
         val parentComment = commentRepository.findByIdOrNull(parentId) ?: return
 
         // parent가 tombstone이 아니면 정리 대상 아님
