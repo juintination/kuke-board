@@ -16,6 +16,10 @@ import java.time.LocalDateTime
         Index(
             name = "idx_comment_article_id_parent_id_deleted_at_id",
             columnList = "article_id, parent_id, deleted_at, id"
+        ),
+        Index(
+            name = "idx_comment_article_id_path",
+            columnList = "article_id, path"
         )
     ]
 )
