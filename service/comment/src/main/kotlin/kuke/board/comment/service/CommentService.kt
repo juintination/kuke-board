@@ -8,6 +8,10 @@ import kuke.board.comment.dto.response.CommentResponse
 import kuke.board.comment.entity.Comment
 import kuke.board.comment.entity.CommentPath
 import kuke.board.comment.repository.CommentRepository
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.comment.CommentCreatedEventPayload
+import kuke.board.common.event.payload.comment.CommentDeletedEventPayload
+import kuke.board.common.outbox.event.OutboxEventPublisher
 import kuke.board.common.pagination.dto.response.CommonCursorResponse
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
@@ -18,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional
 class CommentService(
     private val commentRepository: CommentRepository,
     private val articleCommentCountService: ArticleCommentCountService,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) {
 
     @Transactional
@@ -32,20 +37,42 @@ class CommentService(
             CommentPath.create(it.path.path)
         } ?: CommentPath.create("")
 
-        val comment = Comment.create(
-            request = request,
-            path = parentCommentPath.createChildPath(
-                findDescendantsTopPath(
-                    articleId = request.articleId,
-                    prefix = parentCommentPath.path,
+        val comment = commentRepository.save(
+            Comment.create(
+                request = request,
+                path = parentCommentPath.createChildPath(
+                    findDescendantsTopPath(
+                        articleId = request.articleId,
+                        prefix = parentCommentPath.path,
+                    )
                 )
-            ),
+            )
         )
 
         articleCommentCountService.increase(
             articleId = request.articleId,
         )
-        return CommentResponse.from(commentRepository.save(comment))
+
+        outboxEventPublisher.publish(
+            eventType = EventType.COMMENT_CREATED,
+            payload = CommentCreatedEventPayload(
+                commentId = comment.id,
+                content = comment.content,
+                path = comment.path.path,
+                parentId = comment.parentId,
+                articleId = comment.articleId,
+                writerId = comment.writerId,
+                isTombstoned = comment.isTombstoned(),
+                createdAt = comment.createdAt,
+                modifiedAt = comment.modifiedAt,
+                articleCommentCount = articleCommentCountService.getCommentCount(
+                    articleId = comment.articleId,
+                ),
+            ),
+            shardKey = comment.articleId,
+        )
+
+        return CommentResponse.from(comment)
     }
 
     @Transactional(readOnly = true)
@@ -185,6 +212,25 @@ class CommentService(
     ) {
         articleCommentCountService.decrease(
             articleId = comment.articleId,
+        )
+
+        outboxEventPublisher.publish(
+            eventType = EventType.COMMENT_DELETED,
+            payload = CommentDeletedEventPayload(
+                commentId = comment.id,
+                content = comment.content,
+                path = comment.path.path,
+                parentId = comment.parentId,
+                articleId = comment.articleId,
+                writerId = comment.writerId,
+                isTombstoned = comment.isTombstoned(),
+                createdAt = comment.createdAt,
+                modifiedAt = comment.modifiedAt,
+                articleCommentCount = articleCommentCountService.getCommentCount(
+                    articleId = comment.articleId,
+                ),
+            ),
+            shardKey = comment.articleId,
         )
 
         // root면 종료

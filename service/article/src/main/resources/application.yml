@@ -22,3 +22,11 @@ spring:
         format_sql: true
     show-sql: true
     open-in-view: false
+
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+
+  kafka:
+    bootstrap-servers: ${kafka.bootstrap.servers}

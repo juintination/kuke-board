@@ -1,5 +1,9 @@
 package kuke.board.like.service
 
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.like.ArticleLikedEventPayload
+import kuke.board.common.event.payload.like.ArticleUnlikedEventPayload
+import kuke.board.common.outbox.event.OutboxEventPublisher
 import kuke.board.like.dto.response.ArticleLikeResponse
 import kuke.board.like.entity.ArticleLike
 import kuke.board.like.repository.ArticleLikeRepository
@@ -10,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional
 class ArticleLikeService(
     private val articleLikeRepository: ArticleLikeRepository,
     private val articleLikeCountService: ArticleLikeCountService,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) {
 
     @Transactional
@@ -28,10 +33,36 @@ class ArticleLikeService(
                 articleLikeCountService.increase(
                     articleId = articleId,
                 )
+
+                outboxEventPublisher.publish(
+                    eventType = EventType.ARTICLE_LIKED,
+                    payload = ArticleLikedEventPayload(
+                        articleId = articleId,
+                        userId = userId,
+                        createdAt = existingLike.createdAt,
+                        articleLikeCount = articleLikeCountService.getLikeCount(
+                            articleId = articleId,
+                        ),
+                    ),
+                    shardKey = articleId,
+                )
             } else {
                 existingLike.tombstone()
                 articleLikeCountService.decrease(
                     articleId = articleId,
+                )
+
+                outboxEventPublisher.publish(
+                    eventType = EventType.ARTICLE_UNLIKED,
+                    payload = ArticleUnlikedEventPayload(
+                        articleId = articleId,
+                        userId = userId,
+                        createdAt = existingLike.createdAt,
+                        articleLikeCount = articleLikeCountService.getLikeCount(
+                            articleId = articleId,
+                        ),
+                    ),
+                    shardKey = articleId,
                 )
             }
             existingLike
@@ -44,6 +75,19 @@ class ArticleLikeService(
             )
             articleLikeCountService.increase(
                 articleId = articleId,
+            )
+
+            outboxEventPublisher.publish(
+                eventType = EventType.ARTICLE_LIKED,
+                payload = ArticleLikedEventPayload(
+                    articleId = articleId,
+                    userId = userId,
+                    createdAt = newLike.createdAt,
+                    articleLikeCount = articleLikeCountService.getLikeCount(
+                        articleId = articleId,
+                    ),
+                ),
+                shardKey = articleId,
             )
             newLike
         }

@@ -7,6 +7,11 @@ import kuke.board.article.dto.request.ArticleUpdateRequest
 import kuke.board.article.dto.response.ArticleResponse
 import kuke.board.article.entity.Article
 import kuke.board.article.repository.ArticleRepository
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.article.ArticleCreatedEventPayload
+import kuke.board.common.event.payload.article.ArticleDeletedEventPayload
+import kuke.board.common.event.payload.article.ArticleUpdatedEventPayload
+import kuke.board.common.outbox.event.OutboxEventPublisher
 import kuke.board.common.pagination.dto.response.CommonCursorResponse
 import kuke.board.common.pagination.dto.response.CommonPageResponse
 import kuke.board.common.pagination.util.PageLimitCalculator
@@ -17,18 +22,34 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ArticleService(
-    private val articleRepository: ArticleRepository
+    private val articleRepository: ArticleRepository,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) {
 
     @Transactional
     fun create(
         request: ArticleCreateRequest
     ): ArticleResponse {
-        val article = Article.create(
-            request = request,
+        val article = articleRepository.save(
+            Article.create(
+                request = request,
+            )
+        )
+        outboxEventPublisher.publish(
+            eventType = EventType.ARTICLE_CREATED,
+            payload = ArticleCreatedEventPayload(
+                articleId = article.id,
+                title = article.title,
+                content = article.content,
+                boardId = article.boardId,
+                writerId = article.writerId,
+                createdAt = article.createdAt,
+                modifiedAt = article.modifiedAt,
+            ),
+            shardKey = article.boardId,
         )
 
-        return ArticleResponse.from(articleRepository.save(article))
+        return ArticleResponse.from(article)
     }
 
     @Transactional(readOnly = true)
@@ -103,6 +124,21 @@ class ArticleService(
     ): ArticleResponse {
         val article = getArticleOrThrow(articleId)
         article.update(request)
+
+        outboxEventPublisher.publish(
+            eventType = EventType.ARTICLE_UPDATED,
+            payload = ArticleUpdatedEventPayload(
+                articleId = article.id,
+                title = article.title,
+                content = article.content,
+                boardId = article.boardId,
+                writerId = article.writerId,
+                createdAt = article.createdAt,
+                modifiedAt = article.modifiedAt,
+            ),
+            shardKey = article.boardId,
+        )
+
         return ArticleResponse.from(article)
     }
 
@@ -112,6 +148,20 @@ class ArticleService(
     ) {
         val article = getArticleOrThrow(articleId)
         articleRepository.delete(article)
+
+        outboxEventPublisher.publish(
+            eventType = EventType.ARTICLE_DELETED,
+            payload = ArticleDeletedEventPayload(
+                articleId = article.id,
+                title = article.title,
+                content = article.content,
+                boardId = article.boardId,
+                writerId = article.writerId,
+                createdAt = article.createdAt,
+                modifiedAt = article.modifiedAt,
+            ),
+            shardKey = article.boardId,
+        )
     }
 
     private fun getArticleOrThrow(

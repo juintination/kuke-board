@@ -11,7 +11,7 @@ class ArticleCommentCountService(
 ) {
 
     @Transactional(readOnly = true)
-    fun getLikeCount(
+    fun getCommentCount(
         articleId: Long,
     ): Long {
         return articleCommentCountRepository.findById(articleId)

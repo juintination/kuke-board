@@ -1,5 +1,8 @@
 package kuke.board.view.service
 
+import kuke.board.common.event.EventType
+import kuke.board.common.event.payload.view.ArticleViewedEventPayload
+import kuke.board.common.outbox.event.OutboxEventPublisher
 import kuke.board.view.entity.ArticleViewCount
 import kuke.board.view.repository.ArticleViewCountBackUpRepository
 import org.springframework.stereotype.Component
@@ -7,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 
 @Component
 class ArticleViewCountBackUpProcessor(
-    private val articleViewCountBackUpRepository: ArticleViewCountBackUpRepository
+    private val articleViewCountBackUpRepository: ArticleViewCountBackUpRepository,
+    private val outboxEventPublisher: OutboxEventPublisher,
 ) {
 
     @Transactional
@@ -32,5 +36,14 @@ class ArticleViewCountBackUpProcessor(
                 )
             }
         }
+
+        outboxEventPublisher.publish(
+            eventType = EventType.ARTICLE_VIEWED,
+            payload = ArticleViewedEventPayload(
+                articleId = articleId,
+                viewCount = viewCount,
+            ),
+            shardKey = articleId,
+        )
     }
 }
