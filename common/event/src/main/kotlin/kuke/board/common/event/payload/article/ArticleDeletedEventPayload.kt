@@ -4,11 +4,11 @@ import kuke.board.common.event.EventPayload
 import java.time.LocalDateTime
 
 data class ArticleDeletedEventPayload(
-    val articleId: Long? = null,
-    val title: String? = null,
-    val content: String? = null,
-    val boardId: Long? = null,
-    val writerId: Long? = null,
-    val createdAt: LocalDateTime? = null,
-    val modifiedAt: LocalDateTime? = null,
+    val articleId: Long,
+    val title: String,
+    val content: String,
+    val boardId: Long,
+    val writerId: Long,
+    val createdAt: LocalDateTime,
+    val modifiedAt: LocalDateTime,
 ) : EventPayload

@@ -17,8 +17,8 @@ class CommentCreatedEventHandler(
     ) {
         val payload = event.payload
         articleCommentCountRepository.createOrUpdate(
-            articleId = payload.articleId!!,
-            commentCount = payload.articleCommentCount!!,
+            articleId = payload.articleId,
+            commentCount = payload.articleCommentCount,
             ttl = calculateDurationToMidnight(),
         )
     }
@@ -29,5 +29,5 @@ class CommentCreatedEventHandler(
 
     override fun findArticleId(
         event: Event<CommentCreatedEventPayload>,
-    ) = event.payload.articleId!!
+    ) = event.payload.articleId
 }

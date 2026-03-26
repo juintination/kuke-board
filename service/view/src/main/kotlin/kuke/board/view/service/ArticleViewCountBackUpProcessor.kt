@@ -41,7 +41,7 @@ class ArticleViewCountBackUpProcessor(
             eventType = EventType.ARTICLE_VIEWED,
             payload = ArticleViewedEventPayload(
                 articleId = articleId,
-                viewCount = viewCount,
+                articleViewCount = viewCount,
             ),
             shardKey = articleId,
         )

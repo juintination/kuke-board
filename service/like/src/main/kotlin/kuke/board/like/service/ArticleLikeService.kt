@@ -37,6 +37,7 @@ class ArticleLikeService(
                 outboxEventPublisher.publish(
                     eventType = EventType.ARTICLE_LIKED,
                     payload = ArticleLikedEventPayload(
+                        articleLikeId = existingLike.id!!,
                         articleId = articleId,
                         userId = userId,
                         createdAt = existingLike.createdAt,
@@ -55,6 +56,7 @@ class ArticleLikeService(
                 outboxEventPublisher.publish(
                     eventType = EventType.ARTICLE_UNLIKED,
                     payload = ArticleUnlikedEventPayload(
+                        articleLikeId = existingLike.id!!,
                         articleId = articleId,
                         userId = userId,
                         createdAt = existingLike.createdAt,
@@ -80,6 +82,7 @@ class ArticleLikeService(
             outboxEventPublisher.publish(
                 eventType = EventType.ARTICLE_LIKED,
                 payload = ArticleLikedEventPayload(
+                    articleLikeId = newLike.id!!,
                     articleId = articleId,
                     userId = userId,
                     createdAt = newLike.createdAt,

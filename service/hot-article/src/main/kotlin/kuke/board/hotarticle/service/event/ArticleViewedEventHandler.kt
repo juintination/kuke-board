@@ -17,8 +17,8 @@ class ArticleViewedEventHandler(
     ) {
         val payload = event.payload
         articleViewCountRepository.createOrUpdate(
-            articleId = payload.articleId!!,
-            viewCount = payload.viewCount!!,
+            articleId = payload.articleId,
+            viewCount = payload.articleViewCount,
             ttl = calculateDurationToMidnight(),
         )
     }
@@ -29,5 +29,5 @@ class ArticleViewedEventHandler(
 
     override fun findArticleId(
         event: Event<ArticleViewedEventPayload>,
-    ) = event.payload.articleId!!
+    ) = event.payload.articleId
 }

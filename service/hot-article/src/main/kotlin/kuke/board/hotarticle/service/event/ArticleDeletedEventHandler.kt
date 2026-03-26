@@ -18,12 +18,12 @@ class ArticleDeletedEventHandler(
     ) {
         val payload = event.payload
         articleCreatedTimeRepository.delete(
-            articleId = payload.articleId!!,
+            articleId = payload.articleId,
         )
 
         hotArticleListRepository.remove(
-            articleId = payload.articleId!!,
-            time = payload.createdAt!!,
+            articleId = payload.articleId,
+            time = payload.createdAt,
         )
     }
 
@@ -33,5 +33,5 @@ class ArticleDeletedEventHandler(
 
     override fun findArticleId(
         event: Event<ArticleDeletedEventPayload>,
-    ) = event.payload.articleId!!
+    ) = event.payload.articleId
 }

@@ -38,7 +38,7 @@ class ArticleService(
         outboxEventPublisher.publish(
             eventType = EventType.ARTICLE_CREATED,
             payload = ArticleCreatedEventPayload(
-                articleId = article.id,
+                articleId = article.id!!,
                 title = article.title,
                 content = article.content,
                 boardId = article.boardId,
@@ -128,7 +128,7 @@ class ArticleService(
         outboxEventPublisher.publish(
             eventType = EventType.ARTICLE_UPDATED,
             payload = ArticleUpdatedEventPayload(
-                articleId = article.id,
+                articleId = article.id!!,
                 title = article.title,
                 content = article.content,
                 boardId = article.boardId,
@@ -152,7 +152,7 @@ class ArticleService(
         outboxEventPublisher.publish(
             eventType = EventType.ARTICLE_DELETED,
             payload = ArticleDeletedEventPayload(
-                articleId = article.id,
+                articleId = article.id!!,
                 title = article.title,
                 content = article.content,
                 boardId = article.boardId,

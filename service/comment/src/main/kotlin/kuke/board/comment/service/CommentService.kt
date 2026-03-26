@@ -56,10 +56,10 @@ class CommentService(
         outboxEventPublisher.publish(
             eventType = EventType.COMMENT_CREATED,
             payload = CommentCreatedEventPayload(
-                commentId = comment.id,
+                commentId = comment.id!!,
                 content = comment.content,
                 path = comment.path.path,
-                parentId = comment.parentId,
+                parentId = comment.parentId!!,
                 articleId = comment.articleId,
                 writerId = comment.writerId,
                 isTombstoned = comment.isTombstoned(),
@@ -217,10 +217,10 @@ class CommentService(
         outboxEventPublisher.publish(
             eventType = EventType.COMMENT_DELETED,
             payload = CommentDeletedEventPayload(
-                commentId = comment.id,
+                commentId = comment.id!!,
                 content = comment.content,
                 path = comment.path.path,
-                parentId = comment.parentId,
+                parentId = comment.parentId!!,
                 articleId = comment.articleId,
                 writerId = comment.writerId,
                 isTombstoned = comment.isTombstoned(),

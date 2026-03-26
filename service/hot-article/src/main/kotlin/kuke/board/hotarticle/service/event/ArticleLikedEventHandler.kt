@@ -17,8 +17,8 @@ class ArticleLikedEventHandler(
     ) {
         val payload = event.payload
         articleLikeCountRepository.createOrUpdate(
-            articleId = payload.articleId!!,
-            likeCount = payload.articleLikeCount!!,
+            articleId = payload.articleId,
+            likeCount = payload.articleLikeCount,
             ttl = calculateDurationToMidnight(),
         )
     }
@@ -29,5 +29,5 @@ class ArticleLikedEventHandler(
 
     override fun findArticleId(
         event: Event<ArticleLikedEventPayload>,
-    ) = event.payload.articleId!!
+    ) = event.payload.articleId
 }

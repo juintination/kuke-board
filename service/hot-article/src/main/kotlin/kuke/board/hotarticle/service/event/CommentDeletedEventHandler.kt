@@ -17,8 +17,8 @@ class CommentDeletedEventHandler(
     ) {
         val payload = event.payload
         articleCommentCountRepository.createOrUpdate(
-            articleId = payload.articleId!!,
-            commentCount = payload.articleCommentCount!!,
+            articleId = payload.articleId,
+            commentCount = payload.articleCommentCount,
             ttl = calculateDurationToMidnight(),
         )
     }
