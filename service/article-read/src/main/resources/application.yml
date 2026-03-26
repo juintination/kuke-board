@@ -1,2 +1,33 @@
 server:
   port: 8085
+
+spring:
+  application:
+    name: kuke-board-article-read-service
+
+  config:
+    import: file:.env.${spring.profiles.active}[.properties]
+
+  data:
+    redis:
+      host: ${redis.host}
+      port: ${redis.port}
+
+  kafka:
+    bootstrap-servers: ${kafka.bootstrap.servers}
+    consumer:
+      group-id: ${kafka.article-read.consumer.group-id}
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest
+      enable-auto-commit: false
+
+endpoints:
+  kuke-board-article-service:
+    url: ${kuke-board-article-service.url}
+  kuke-board-comment-service:
+    url: ${kuke-board-comment-service.url}
+  kuke-board-like-service:
+    url: ${kuke-board-like-service.url}
+  kuke-board-view-service:
+    url: ${kuke-board-view-service.url}
