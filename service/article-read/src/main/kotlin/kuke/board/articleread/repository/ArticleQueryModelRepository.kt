@@ -27,7 +27,7 @@ class ArticleQueryModelRepository(
         )
 
         redisTemplate.opsForValue()
-            .set(key, DataSerializer.toJson(articleQueryModel)!!, ttl)
+            .set(key, DataSerializer.toJson(articleQueryModel), ttl)
     }
 
     fun update(
@@ -38,7 +38,7 @@ class ArticleQueryModelRepository(
         )
 
         redisTemplate.opsForValue()
-            .setIfPresent(key, DataSerializer.toJson(articleQueryModel)!!)
+            .setIfPresent(key, DataSerializer.toJson(articleQueryModel))
     }
 
     fun delete(
@@ -60,7 +60,7 @@ class ArticleQueryModelRepository(
 
         val json = redisTemplate.opsForValue().get(key) ?: return null
         return try {
-            DataSerializer.fromJson(json, ArticleQueryModel::class.java)
+            DataSerializer.fromJson<ArticleQueryModel>(json)
         } catch (e: Exception) {
             log.error(e) { "[ArticleQueryModelRepository.read] articleId=$articleId" }
             null

@@ -20,18 +20,20 @@ object DataSerializer {
     fun <T> fromJson(
         data: String,
         clazz: Class<T>,
-    ): T? {
-        return try {
-            objectMapper.readValue(data, clazz)
-        } catch (e: Exception) {
+    ): T {
+        try {
+            return objectMapper.readValue(data, clazz)
+        } catch (
+            e: Exception,
+        ) {
             log.error(e) { "[DataSerializer.fromJson] data=$data clazz=$clazz" }
-            null
+            throw e
         }
     }
 
     inline fun <reified T> fromJson(
         data: String,
-    ): T? {
+    ): T {
         return fromJson(
             data = data,
             clazz = T::class.java,
@@ -47,12 +49,14 @@ object DataSerializer {
 
     fun toJson(
         obj: Any,
-    ): String? {
-        return try {
-            objectMapper.writeValueAsString(obj)
-        } catch (e: Exception) {
+    ): String {
+        try {
+            return objectMapper.writeValueAsString(obj)
+        } catch (
+            e: Exception,
+        ) {
             log.error(e) { "[DataSerializer.toJson] object=$obj" }
-            null
+            throw e
         }
     }
 }

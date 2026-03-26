@@ -12,7 +12,7 @@ data class Event<T : EventPayload>(
     fun toJson(): String {
         return DataSerializer.toJson(
             obj = this,
-        ) ?: throw IllegalStateException("Failed to serialize Event: $this")
+        )
     }
 
     companion object {
@@ -32,7 +32,7 @@ data class Event<T : EventPayload>(
         ): Event<EventPayload>? {
             val eventRaw = DataSerializer.fromJson<EventRaw>(
                 data = json,
-            ) ?: return null
+            )
 
             val type = EventType.from(
                 type = eventRaw.type,
