@@ -63,6 +63,9 @@ class ArticleReadService(
 
         return ArticleReadResponse.from(
             articleQueryModel = articleQueryModel!!,
+            viewCount = viewClient.count(
+                articleId = articleId,
+            ),
         )
     }
 
@@ -76,7 +79,6 @@ class ArticleReadService(
                 article = article,
                 commentCount = commentClient.count(articleId),
                 likeCount = likeClient.count(articleId),
-                viewCount = viewClient.count(articleId),
             )
         }
 

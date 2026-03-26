@@ -21,7 +21,6 @@ class ArticleReadEventConsumer(
             Topics.KUKE_BOARD_ARTICLE,
             Topics.KUKE_BOARD_COMMENT,
             Topics.KUKE_BOARD_LIKE,
-            Topics.KUKE_BOARD_VIEW,
         ]
     )
     fun listen(

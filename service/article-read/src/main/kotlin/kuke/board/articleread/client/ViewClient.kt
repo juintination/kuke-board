@@ -2,6 +2,7 @@ package kuke.board.articleread.client
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
@@ -17,9 +18,14 @@ class ViewClient(
         RestClient.create(viewServiceUrl)
     }
 
+    @Cacheable(
+        cacheNames = ["articleViewCount"],
+        key = "#articleId",
+    )
     fun count(
         articleId: Long,
     ): Long {
+        log.info { "[ViewClient.count] articleId=$articleId" }
         return try {
             restClient.get()
                 .uri("/api/articles/{articleId}/views/count", articleId)

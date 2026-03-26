@@ -18,6 +18,7 @@ data class ArticleReadResponse(
     companion object {
         fun from(
             articleQueryModel: ArticleQueryModel,
+            viewCount: Long,
         ) = ArticleReadResponse(
             id = articleQueryModel.id,
             title = articleQueryModel.title,
@@ -28,7 +29,7 @@ data class ArticleReadResponse(
             modifiedAt = articleQueryModel.modifiedAt,
             commentCount = articleQueryModel.commentCount,
             likeCount = articleQueryModel.likeCount,
-            viewCount = articleQueryModel.viewCount,
+            viewCount = viewCount,
         )
     }
 }
