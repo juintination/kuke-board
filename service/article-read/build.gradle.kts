@@ -6,6 +6,7 @@ dependencies {
     implementation("io.github.oshai:kotlin-logging-jvm:6.0.9")
     implementation(project(":common:event"))
     implementation(project(":common:serialization"))
+    implementation(project(":common:pagination"))
 }
 
 configurations.all {

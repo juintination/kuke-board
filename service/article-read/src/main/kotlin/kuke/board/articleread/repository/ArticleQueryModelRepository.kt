@@ -67,6 +67,22 @@ class ArticleQueryModelRepository(
         }
     }
 
+    fun readAll(
+        articleIds: List<Long>,
+    ): Map<Long, ArticleQueryModel> {
+        val keyList = articleIds.map { generateKey(it) }
+        return redisTemplate.opsForValue().multiGet(keyList)
+            ?.filterNotNull()
+            ?.map { json ->
+                DataSerializer.fromJson(
+                    data = json,
+                    clazz = ArticleQueryModel::class.java,
+                )
+            }
+            ?.associateBy { it.id }
+            ?: emptyMap()
+    }
+
     private fun generateKey(
         articleQueryModel: ArticleQueryModel,
     ) = generateKey(articleQueryModel.id)

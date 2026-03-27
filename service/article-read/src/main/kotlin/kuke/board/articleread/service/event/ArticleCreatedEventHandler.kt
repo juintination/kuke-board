@@ -1,6 +1,7 @@
 package kuke.board.articleread.service.event
 
 import kuke.board.articleread.model.ArticleQueryModel
+import kuke.board.articleread.repository.ArticleIdListRepository
 import kuke.board.articleread.repository.ArticleQueryModelRepository
 import kuke.board.common.event.Event
 import kuke.board.common.event.EventType
@@ -11,6 +12,7 @@ import java.time.Duration
 @Component
 class ArticleCreatedEventHandler(
     private val articleQueryModelRepository: ArticleQueryModelRepository,
+    private val articleIdListRepository: ArticleIdListRepository,
 ) : EventHandler<ArticleCreatedEventPayload> {
 
     override fun handle(
@@ -22,6 +24,11 @@ class ArticleCreatedEventHandler(
                 payload = payload,
             ),
             ttl = Duration.ofDays(1),
+        )
+        articleIdListRepository.add(
+            boardId = payload.boardId,
+            articleId = payload.articleId,
+            limit = 1000L,
         )
     }
 

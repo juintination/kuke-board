@@ -5,8 +5,10 @@ import kuke.board.articleread.client.ArticleClient
 import kuke.board.articleread.client.CommentClient
 import kuke.board.articleread.client.LikeClient
 import kuke.board.articleread.client.ViewClient
+import kuke.board.articleread.dto.response.ArticleReadPageResponse
 import kuke.board.articleread.dto.response.ArticleReadResponse
 import kuke.board.articleread.model.ArticleQueryModel
+import kuke.board.articleread.repository.ArticleIdListRepository
 import kuke.board.articleread.repository.ArticleQueryModelRepository
 import kuke.board.articleread.service.event.EventHandler
 import kuke.board.common.event.Event
@@ -17,6 +19,7 @@ import java.time.Duration
 @Service
 class ArticleReadService(
     private val articleQueryModelRepository: ArticleQueryModelRepository,
+    private val articleIdListRepository: ArticleIdListRepository,
     private val articleClient: ArticleClient,
     private val commentClient: CommentClient,
     private val likeClient: LikeClient,
@@ -67,6 +70,103 @@ class ArticleReadService(
                 articleId = articleId,
             ),
         )
+    }
+
+    fun readAll(
+        boardId: Long,
+        page: Long,
+        size: Long,
+    ): ArticleReadPageResponse {
+        val articleIds = readAllArticleIds(
+            boardId = boardId,
+            page = page,
+            size = size,
+        )
+
+        val articles = readAll(
+            articleIds = articleIds,
+        )
+
+        return ArticleReadPageResponse.of(
+            articles = articles,
+        )
+    }
+
+    private fun readAll(
+        articleIds: List<Long>,
+    ): List<ArticleReadResponse> {
+        val articleMap = articleQueryModelRepository.readAll(
+            articleIds = articleIds,
+        )
+
+        return articleIds.mapNotNull { articleId ->
+            val articleQueryModel = articleMap[articleId] ?: fetch(articleId)
+            articleQueryModel?.let {
+                ArticleReadResponse.from(
+                    articleQueryModel = it,
+                    viewCount = viewClient.count(it.id),
+                )
+            }
+        }
+    }
+
+    private fun readAllArticleIds(
+        boardId: Long,
+        page: Long,
+        size: Long,
+    ): List<Long> {
+        val articleIds = articleIdListRepository.readAll(boardId, (page - 1) * size, size)
+        return if (articleIds.size == size.toInt()) {
+            log.info { "[ArticleReadService.readAllArticleIds] return redis data." }
+            articleIds
+        } else {
+            log.info { "[ArticleReadService.readAllArticleIds] return origin data." }
+            articleClient.readAll(boardId, page, size)!!.items.map { it.id }
+        }
+    }
+
+    fun readAllCursor(
+        boardId: Long,
+        cursor: Long?,
+        size: Int,
+    ): ArticleReadPageResponse {
+        val articleIds = readAllCursorArticleIds(
+            boardId = boardId,
+            cursor = cursor,
+            size = size,
+        )
+
+        val articles = readAll(
+            articleIds = articleIds,
+        )
+
+        return ArticleReadPageResponse.of(
+            articles = articles,
+        )
+    }
+
+    private fun readAllCursorArticleIds(
+        boardId: Long,
+        cursor: Long?,
+        size: Int,
+    ): List<Long> {
+        val articleIds = articleIdListRepository.readAllInfiniteScroll(
+            boardId = boardId,
+            lastArticleId = cursor,
+            limit = size,
+        )
+
+        return if (articleIds.size == size) {
+            log.info { "[ArticleReadService.readAllCursorArticleIds] return redis data." }
+            articleIds
+        } else {
+            log.info { "[ArticleReadService.readAllCursorArticleIds] return origin data." }
+            articleClient.readAllCursor(
+                boardId = boardId,
+                size = size,
+                cursor = cursor,
+            )!!.items.map { it.id }
+        }
     }
 
     private fun fetch(
