@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: kuke-board-comment-service
+    name: kuke-board-view-service
 
   config:
     import: file:.env.${spring.profiles.active}[.properties]
