@@ -10,7 +10,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${db.host}:${db.port}/${db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
+    url: jdbc:mysql://${db.host}:${db.port}/${comment.db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
     username: ${db.username}
     password: ${db.password}
 
