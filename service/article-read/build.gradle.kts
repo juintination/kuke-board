@@ -2,6 +2,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.springframework.kafka:spring-kafka")
+    implementation("org.springframework.boot:spring-boot-starter-aspectj")
     implementation("org.springframework.boot:spring-boot-starter-log4j2")
     implementation("io.github.oshai:kotlin-logging-jvm:6.0.9")
     implementation(project(":common:event"))

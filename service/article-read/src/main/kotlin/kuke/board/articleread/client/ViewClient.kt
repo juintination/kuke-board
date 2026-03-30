@@ -1,8 +1,8 @@
 package kuke.board.articleread.client
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kuke.board.articleread.cache.annotation.OptimizedCacheable
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Component
 import org.springframework.web.client.RestClient
 
@@ -18,9 +18,9 @@ class ViewClient(
         RestClient.create(viewServiceUrl)
     }
 
-    @Cacheable(
-        cacheNames = ["articleViewCount"],
-        key = "#articleId",
+    @OptimizedCacheable(
+        type = "articleViewCount",
+        ttlSeconds = 1,
     )
     fun count(
         articleId: Long,
