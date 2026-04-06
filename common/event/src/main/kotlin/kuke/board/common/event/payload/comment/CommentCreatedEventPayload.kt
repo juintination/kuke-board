@@ -7,7 +7,7 @@ data class CommentCreatedEventPayload(
     val commentId: Long,
     val content: String,
     val path: String,
-    val parentId: Long,
+    val parentId: Long?,
     val articleId: Long,
     val writerId: Long,
     val isTombstoned: Boolean,

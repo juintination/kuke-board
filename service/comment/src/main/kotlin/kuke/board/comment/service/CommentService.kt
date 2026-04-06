@@ -59,7 +59,7 @@ class CommentService(
                 commentId = comment.id!!,
                 content = comment.content,
                 path = comment.path.path,
-                parentId = comment.parentId!!,
+                parentId = comment.parentId,
                 articleId = comment.articleId,
                 writerId = comment.writerId,
                 isTombstoned = comment.isTombstoned(),
