@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: kuke-board-gateway-service
+
+  config:
+    import: file:.env.${spring.profiles.active}[.properties]
+
+  cloud:
+    gateway:
+      server:
+        web-flux:
+          routes:
+            - id: like-service
+              uri: ${kuke-board-like-service.url}
+              predicates:
+                - Path=/api/articles/*/likes/**
+
+            - id: view-service
+              uri: ${kuke-board-view-service.url}
+              predicates:
+                - Path=/api/articles/*/views/**
+
+            - id: comment-service
+              uri: ${kuke-board-comment-service.url}
+              predicates:
+                - Path=/api/comments/**, /api/articles/*/comments/**
+
+            - id: article-read-service
+              uri: ${kuke-board-article-read-service.url}
+              predicates:
+                - Path=/api/articles/**
+                - Method=GET
+
+            - id: article-service
+              uri: ${kuke-board-article-service.url}
+              predicates:
+                - Path=/api/articles/**
+
+            - id: hot-article-service
+              uri: ${kuke-board-hot-article-service.url}
+              predicates:
+                - Path=/api/hot-articles/**
