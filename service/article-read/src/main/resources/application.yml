@@ -31,3 +31,5 @@ endpoints:
     url: ${kuke-board-like-service.url}
   kuke-board-view-service:
     url: ${kuke-board-view-service.url}
+  kuke-board-user-service:
+    url: ${kuke-board-user-service.url}

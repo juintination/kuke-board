@@ -16,6 +16,7 @@ data class ArticleQueryModel(
     var content: String,
     var boardId: Long,
     val writerId: Long,
+    var writerNickname: String? = null,
     val createdAt: LocalDateTime,
     var modifiedAt: LocalDateTime,
     var commentCount: Long,
@@ -38,6 +39,7 @@ data class ArticleQueryModel(
 
         fun create(
             article: ArticleClient.ArticleResponse,
+            writerNickname: String? = null,
             commentCount: Long,
             likeCount: Long,
         ) = ArticleQueryModel(
@@ -46,6 +48,7 @@ data class ArticleQueryModel(
             content = article.content,
             boardId = article.boardId,
             writerId = article.writerId,
+            writerNickname = writerNickname,
             createdAt = article.createdAt,
             modifiedAt = article.modifiedAt,
             commentCount = commentCount,

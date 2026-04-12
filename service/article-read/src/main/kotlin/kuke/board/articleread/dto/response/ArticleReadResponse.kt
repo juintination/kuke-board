@@ -8,7 +8,7 @@ data class ArticleReadResponse(
     val title: String,
     val content: String,
     val boardId: Long,
-    val writerId: Long,
+    val writer: WriterResponse,
     val createdAt: LocalDateTime,
     val modifiedAt: LocalDateTime,
     val commentCount: Long,
@@ -24,12 +24,21 @@ data class ArticleReadResponse(
             title = articleQueryModel.title,
             content = articleQueryModel.content,
             boardId = articleQueryModel.boardId,
-            writerId = articleQueryModel.writerId,
+            writer = WriterResponse(
+                id = articleQueryModel.writerId,
+                nickname = articleQueryModel.writerNickname,
+            ),
             createdAt = articleQueryModel.createdAt,
             modifiedAt = articleQueryModel.modifiedAt,
             commentCount = articleQueryModel.commentCount,
             likeCount = articleQueryModel.likeCount,
             viewCount = viewCount,
         )
+
     }
+
+    data class WriterResponse(
+        val id: Long,
+        val nickname: String?,
+    )
 }

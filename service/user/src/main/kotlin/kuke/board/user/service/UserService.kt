@@ -3,9 +3,11 @@ package kuke.board.user.service
 import kuke.board.user.dto.request.LoginRequest
 import kuke.board.user.dto.request.SignupRequest
 import kuke.board.user.dto.response.TokenResponse
+import kuke.board.user.dto.response.UserResponse
 import kuke.board.user.entity.User
 import kuke.board.user.jwt.JwtTokenProvider
 import kuke.board.user.repository.UserRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -58,6 +60,18 @@ class UserService(
             accessToken = jwtTokenProvider.createToken(
                 userId = user.id!!,
             )
+        )
+    }
+
+    @Transactional(readOnly = true)
+    fun get(
+        userId: Long,
+    ): UserResponse {
+        val user = userRepository.findByIdOrNull(userId)
+            ?: throw IllegalArgumentException("존재하지 않는 사용자입니다.")
+
+        return UserResponse.from(
+            user = user,
         )
     }
 }

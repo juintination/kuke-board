@@ -1,10 +1,7 @@
 package kuke.board.articleread.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kuke.board.articleread.client.ArticleClient
-import kuke.board.articleread.client.CommentClient
-import kuke.board.articleread.client.LikeClient
-import kuke.board.articleread.client.ViewClient
+import kuke.board.articleread.client.*
 import kuke.board.articleread.dto.response.ArticleReadPageResponse
 import kuke.board.articleread.dto.response.ArticleReadResponse
 import kuke.board.articleread.model.ArticleQueryModel
@@ -24,6 +21,7 @@ class ArticleReadService(
     private val commentClient: CommentClient,
     private val likeClient: LikeClient,
     private val viewClient: ViewClient,
+    private val userClient: UserClient,
     private val eventHandlers: List<EventHandler<*>>,
 ) {
 
@@ -60,7 +58,11 @@ class ArticleReadService(
     ): ArticleReadResponse {
         val articleQueryModel = articleQueryModelRepository.read(
             articleId = articleId,
-        ) ?: fetch(
+        )?.let { model ->
+            hydrate(
+                model = model,
+            )
+        } ?: fetch(
             articleId = articleId,
         )
 
@@ -100,7 +102,14 @@ class ArticleReadService(
         )
 
         return articleIds.mapNotNull { articleId ->
-            val articleQueryModel = articleMap[articleId] ?: fetch(articleId)
+            val articleQueryModel = articleMap[articleId]?.let { model ->
+                hydrate(
+                    model = model,
+                )
+            } ?: fetch(
+                articleId = articleId,
+            )
+
             articleQueryModel?.let {
                 ArticleReadResponse.from(
                     articleQueryModel = it,
@@ -180,6 +189,10 @@ class ArticleReadService(
                 commentCount = commentClient.count(articleId),
                 likeCount = likeClient.count(articleId),
             )
+        }?.let { model ->
+            hydrate(
+                model = model,
+            )
         }
 
         articleQueryModel?.let {
@@ -192,5 +205,14 @@ class ArticleReadService(
         log.info { "[ArticleReadService.fetch] fetch data. articleId=$articleId isPresent=${articleQueryModel != null}" }
 
         return articleQueryModel
+    }
+
+    private fun hydrate(
+        model: ArticleQueryModel,
+    ): ArticleQueryModel {
+        if (model.writerNickname == null) {
+            model.writerNickname = userClient.read(model.writerId)?.nickname
+        }
+        return model
     }
 }
