@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 data class CommentDeletedEventPayload(
     val commentId: Long,
     val content: String,
-    val parentId: Long,
+    val parentId: Long?,
     val path: String,
     val articleId: Long,
     val writerId: Long,
