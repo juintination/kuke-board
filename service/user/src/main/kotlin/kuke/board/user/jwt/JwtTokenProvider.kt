@@ -2,12 +2,11 @@ package kuke.board.user.jwt
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
-import java.security.Key
 import java.util.*
+import javax.crypto.SecretKey
 
 @Component
 class JwtTokenProvider(
@@ -18,12 +17,7 @@ class JwtTokenProvider(
     private val accessExpirationMs: Long,
 ) {
 
-    private lateinit var key: Key
-
-    @PostConstruct
-    fun init() {
-        key = Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8))
-    }
+    private val key: SecretKey = Keys.hmacShaKeyFor(secretKey.toByteArray(StandardCharsets.UTF_8))
 
     fun createToken(
         userId: Long,

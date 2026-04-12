@@ -28,10 +28,12 @@ class ArticleService(
 
     @Transactional
     fun create(
+        userId: Long,
         request: ArticleCreateRequest
     ): ArticleResponse {
         val article = articleRepository.save(
             Article.create(
+                writerId = userId,
                 request = request,
             )
         )
@@ -119,10 +121,17 @@ class ArticleService(
 
     @Transactional
     fun update(
+        userId: Long,
         articleId: Long,
         request: ArticleUpdateRequest
     ): ArticleResponse {
         val article = getArticleOrThrow(articleId)
+
+        validateWriter(
+            userId = userId,
+            article = article,
+        )
+
         article.update(request)
 
         outboxEventPublisher.publish(
@@ -144,9 +153,16 @@ class ArticleService(
 
     @Transactional
     fun delete(
+        userId: Long,
         articleId: Long
     ) {
         val article = getArticleOrThrow(articleId)
+
+        validateWriter(
+            userId = userId,
+            article = article,
+        )
+
         articleRepository.delete(article)
 
         outboxEventPublisher.publish(
@@ -168,4 +184,13 @@ class ArticleService(
         articleId: Long
     ): Article = articleRepository.findByIdOrNull(articleId)
         ?: throw IllegalArgumentException("존재하지 않는 게시글입니다. articleId: $articleId")
+
+    private fun validateWriter(
+        userId: Long,
+        article: Article,
+    ) {
+        if (article.writerId != userId) {
+            throw IllegalArgumentException("작성자만 수정/삭제할 수 있습니다. articleId: ${article.id}, userId: $userId")
+        }
+    }
 }

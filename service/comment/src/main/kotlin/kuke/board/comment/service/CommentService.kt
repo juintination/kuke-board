@@ -27,6 +27,7 @@ class CommentService(
 
     @Transactional
     fun create(
+        userId: Long,
         request: CommentCreateRequest,
     ): CommentResponse {
         val parent = findParent(
@@ -39,6 +40,7 @@ class CommentService(
 
         val comment = commentRepository.save(
             Comment.create(
+                writerId = userId,
                 request = request,
                 path = parentCommentPath.createChildPath(
                     findDescendantsTopPath(
@@ -141,10 +143,17 @@ class CommentService(
 
     @Transactional
     fun update(
+        userId: Long,
         commentId: Long,
         request: CommentUpdateRequest,
     ): CommentResponse {
         val comment = getCommentOrThrow(commentId)
+
+        validateWriter(
+            userId = userId,
+            comment = comment,
+        )
+
         comment.update(request)
         return CommentResponse.from(comment)
     }
@@ -157,9 +166,15 @@ class CommentService(
      */
     @Transactional
     fun delete(
+        userId: Long,
         commentId: Long,
     ) {
         val comment = getCommentOrThrow(commentId)
+
+        validateWriter(
+            userId = userId,
+            comment = comment,
+        )
 
         // 자식이 있으면 tombstone 처리
         if (commentRepository.existsByParentId(commentId)) {
@@ -262,5 +277,14 @@ class CommentService(
             prefix = prefix,
             pageable = PageRequest.of(0, 1)
         ).firstOrNull()
+    }
+
+    private fun validateWriter(
+        userId: Long,
+        comment: Comment,
+    ) {
+        if (comment.writerId != userId) {
+            throw IllegalArgumentException("작성자만 수정/삭제할 수 있습니다. commentId: ${comment.id}, userId: $userId")
+        }
     }
 }

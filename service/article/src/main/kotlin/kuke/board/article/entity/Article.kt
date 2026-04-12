@@ -41,12 +41,13 @@ class Article private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
+            writerId: Long,
             request: ArticleCreateRequest,
         ) = Article(
             title = request.title,
             content = request.content,
             boardId = request.boardId,
-            writerId = request.writerId,
+            writerId = writerId,
         )
     }
 

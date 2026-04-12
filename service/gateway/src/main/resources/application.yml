@@ -13,20 +13,43 @@ spring:
       server:
         web-flux:
           routes:
+            - id: like-service-count
+              uri: ${kuke-board-like-service.url}
+              predicates:
+                - Path=/api/articles/*/likes/count
+
             - id: like-service
               uri: ${kuke-board-like-service.url}
               predicates:
                 - Path=/api/articles/*/likes/**
+              filters:
+                - JwtAuthenticationFilter
+
+            - id: view-service-count
+              uri: ${kuke-board-view-service.url}
+              predicates:
+                - Path=/api/articles/*/views/count
 
             - id: view-service
               uri: ${kuke-board-view-service.url}
               predicates:
                 - Path=/api/articles/*/views/**
+              filters:
+                - JwtAuthenticationFilter
+
+            - id: comment-service-get
+              uri: ${kuke-board-comment-service.url}
+              predicates:
+                - Path=/api/comments/**, /api/articles/*/comments/**
+                - Method=GET
 
             - id: comment-service
               uri: ${kuke-board-comment-service.url}
               predicates:
                 - Path=/api/comments/**, /api/articles/*/comments/**
+                - Method=POST, PUT, PATCH, DELETE
+              filters:
+                - JwtAuthenticationFilter
 
             - id: article-read-service
               uri: ${kuke-board-article-read-service.url}
@@ -38,6 +61,9 @@ spring:
               uri: ${kuke-board-article-service.url}
               predicates:
                 - Path=/api/articles/**
+                - Method=POST, PUT, PATCH, DELETE
+              filters:
+                - JwtAuthenticationFilter
 
             - id: hot-article-service
               uri: ${kuke-board-hot-article-service.url}

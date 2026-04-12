@@ -18,9 +18,10 @@ class ArticleController(
 
     @PostMapping
     fun create(
-        @RequestBody request: ArticleCreateRequest
+        @RequestBody request: ArticleCreateRequest,
+        @RequestHeader("X-User-Id") userId: Long,
     ): ArticleResponse {
-        return articleService.create(request)
+        return articleService.create(userId, request)
     }
 
     @GetMapping("/{articleId}")
@@ -49,15 +50,17 @@ class ArticleController(
     @PutMapping("/{articleId}")
     fun update(
         @PathVariable articleId: Long,
-        @RequestBody request: ArticleUpdateRequest
+        @RequestBody request: ArticleUpdateRequest,
+        @RequestHeader("X-User-Id") userId: Long,
     ): ArticleResponse {
-        return articleService.update(articleId, request)
+        return articleService.update(userId, articleId, request)
     }
 
     @DeleteMapping("/{articleId}")
     fun delete(
-        @PathVariable articleId: Long
+        @PathVariable articleId: Long,
+        @RequestHeader("X-User-Id") userId: Long,
     ) {
-        articleService.delete(articleId)
+        articleService.delete(userId, articleId)
     }
 }

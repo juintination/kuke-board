@@ -9,10 +9,10 @@ class ArticleViewController(
     private val articleViewService: ArticleViewService
 ) {
 
-    @PostMapping("/users/{userId}")
+    @PostMapping
     fun increase(
         @PathVariable articleId: Long,
-        @PathVariable userId: Long,
+        @RequestHeader("X-User-Id") userId: Long,
     ): Long {
         return articleViewService.increase(
             articleId = articleId,

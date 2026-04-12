@@ -12,10 +12,10 @@ class ArticleLikeController(
     private val articleLikeCountService: ArticleLikeCountService,
 ) {
 
-    @PostMapping("/users/{userId}/toggle")
+    @PostMapping("/toggle")
     fun toggle(
         @PathVariable articleId: Long,
-        @PathVariable userId: Long,
+        @RequestHeader("X-User-Id") userId: Long,
     ): ArticleLikeResponse {
         return articleLikeService.toggle(
             articleId = articleId,
@@ -23,10 +23,10 @@ class ArticleLikeController(
         )
     }
 
-    @GetMapping("/users/{userId}/is-liked")
+    @GetMapping("/is-liked")
     fun isLiked(
         @PathVariable articleId: Long,
-        @PathVariable userId: Long,
+        @RequestHeader("X-User-Id") userId: Long,
     ): Boolean {
         return articleLikeService.isLiked(
             articleId = articleId,

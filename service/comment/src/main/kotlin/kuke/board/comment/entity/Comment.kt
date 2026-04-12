@@ -52,12 +52,13 @@ class Comment private constructor(
 ) : BaseEntity() {
     companion object {
         fun create(
+            writerId: Long,
             request: CommentCreateRequest,
             path: CommentPath,
         ) = Comment(
             parentId = request.parentId,
             articleId = request.articleId,
-            writerId = request.writerId,
+            writerId = writerId,
             content = request.content,
             path = path,
         )

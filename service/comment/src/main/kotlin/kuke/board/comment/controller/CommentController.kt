@@ -17,9 +17,10 @@ class CommentController(
 
     @PostMapping
     fun create(
-        @RequestBody request: CommentCreateRequest
+        @RequestBody request: CommentCreateRequest,
+        @RequestHeader("X-User-Id") userId: Long,
     ): CommentResponse {
-        return commentService.create(request)
+        return commentService.create(userId, request)
     }
 
     @GetMapping("/{commentId}")
@@ -39,15 +40,17 @@ class CommentController(
     @PutMapping("/{commentId}")
     fun update(
         @PathVariable commentId: Long,
-        @RequestBody request: CommentUpdateRequest
+        @RequestBody request: CommentUpdateRequest,
+        @RequestHeader("X-User-Id") userId: Long,
     ): CommentResponse {
-        return commentService.update(commentId, request)
+        return commentService.update(userId, commentId, request)
     }
 
     @DeleteMapping("/{commentId}")
     fun delete(
-        @PathVariable commentId: Long
+        @PathVariable commentId: Long,
+        @RequestHeader("X-User-Id") userId: Long,
     ) {
-        commentService.delete(commentId)
+        commentService.delete(userId, commentId)
     }
 }
