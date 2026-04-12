@@ -1,0 +1,28 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: kuke-board-user-service
+
+  config:
+    import: file:.env.${spring.profiles.active}[.properties]
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${db.host}:${db.port}/${user.db.name}?serverTimezone=${server.time.zone}&characterEncoding=${character.encoding}
+    username: ${db.username}
+    password: ${db.password}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: true
+    open-in-view: false
+
+jwt:
+  secret-key: ${jwt.secret.key}
+  access-expiration-ms: ${jwt.access.expiration.ms}
