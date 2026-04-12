@@ -43,3 +43,8 @@ spring:
               uri: ${kuke-board-hot-article-service.url}
               predicates:
                 - Path=/api/hot-articles/**
+
+            - id: user-service
+              uri: ${kuke-board-user-service.url}
+              predicates:
+                - Path=/api/users/**
