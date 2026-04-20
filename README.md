@@ -61,8 +61,10 @@
 ### Gateway (8080)
 
 - Spring Cloud Gateway (WebFlux)
-- JWT 검증 → `X-User-Id` 헤더 주입
-- 읽기/쓰기 API 라우팅 분리
+- 라우팅 정책:
+  - 조회성 API(GET)는 read/공개 서비스로 라우팅
+  - 변경성 API(POST/PUT/PATCH/DELETE)는 JWT 필터 적용
+- `JwtAuthenticationFilter`가 Bearer 토큰을 검증하고 `X-User-Id`를 downstream 요청 헤더에 추가
 
 ### User (8087)
 
