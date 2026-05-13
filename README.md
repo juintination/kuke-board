@@ -37,7 +37,8 @@
 
 - 쓰기(Command): `article` 서비스가 MySQL에 정합성 있는 원본 데이터 관리
 - 읽기(Query): `article-read` 서비스가 Redis 기반 비정규화 읽기 모델로 응답
-- 두 서비스는 Kafka 이벤트로 느슨하게 결합 — Event Sourcing 없이 서비스 단위로 Command/Query 책임을 분리한 CQRS 구현
+- 두 서비스는 Kafka 이벤트로 느슨하게 결합
+    - Event Sourcing 없이 서비스 단위로 Command/Query 책임을 분리한 CQRS 구현
 
 ### 2. Outbox Pattern + Kafka
 
@@ -53,7 +54,7 @@
 | `shard_key`  | 샤드 분산용 키                           |
 | `created_at` | 생성 시각                              |
 
-인덱스 `(shard_key, created_at)` — 샤드별 미전송 이벤트 폴링 쿼리 최적화
+인덱스 `(shard_key, created_at)`: 샤드별 미전송 이벤트 폴링 쿼리 최적화
 
 **이벤트 발행 흐름 (이중 발행 전략)**
 
